@@ -1,1 +1,441 @@
-# One-on-one-template-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly 1-on-1 Performance Form</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f8f9fa;
+            --border-color: #dcdfe6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 10px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input, select, textarea {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        input[readonly] {
+            background-color: #eef2f5;
+            color: #666;
+        }
+
+        .kpi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .kpi-table th, .kpi-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        .kpi-table th {
+            background-color: #f1f4f8;
+            color: var(--primary-color);
+        }
+
+        .bullet-input {
+            width: 100%;
+            height: 100px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            justify-content: flex-end;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-secondary {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-fix {
+            background-color: #2ecc71;
+            color: white;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            margin-top: 5px;
+            align-self: flex-start;
+        }
+
+        #emailPreview {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px dashed var(--accent-color);
+            background: #fafafa;
+        }
+
+        #emailContent {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #ffffff;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Monthly 1-on-1 Performance Form</h1>
+
+    <form id="oneOnOneForm">
+        <!-- Agent Details -->
+        <div class="section-title">General Information</div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label for="agentName">Agent Name *</label>
+                <input type="text" id="agentName" required placeholder="e.g. Jane Doe">
+            </div>
+            <div class="form-group">
+                <label for="lob">Line of Business (LOB) *</label>
+                <input type="text" id="lob" required placeholder="e.g. Customer Support, Billing">
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <div class="form-group">
+                <label for="monthSelect">Month *</label>
+                <select id="monthSelect" required>
+                    <option value="">Select Month</option>
+                    <option>January</option><option>February</option><option>March</option>
+                    <option>April</option><option>May</option><option>June</option>
+                    <option>July</option><option>August</option><option>September</option>
+                    <option>October</option><option>November</option><option>December</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="yearInput">Year *</label>
+                <input type="number" id="yearInput" required min="2020" max="2099">
+            </div>
+            <div class="form-group">
+                <label for="oneOnOneDate">1-on-1 Date</label>
+                <input type="date" id="oneOnOneDate" required>
+            </div>
+        </div>
+
+        <!-- KPI Metrics Table -->
+        <div class="section-title">KPI Performance Summary</div>
+        <table class="kpi-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Target</th>
+                    <th>Actual Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>AHT (seconds)</td>
+                    <td>1017 secs</td>
+                    <td><input type="number" id="kpi_aht" placeholder="e.g. 980"></td>
+                </tr>
+                <tr>
+                    <td>Transfers (%)</td>
+                    <td>&lt; 4%</td>
+                    <td><input type="text" id="kpi_transfers" placeholder="e.g. 3.2%"></td>
+                </tr>
+                <tr>
+                    <td>Support Placement (%)</td>
+                    <td>&lt; 5%</td>
+                    <td><input type="text" id="kpi_support" placeholder="e.g. 4.1%"></td>
+                </tr>
+                <tr>
+                    <td>Productivity (%)</td>
+                    <td>&gt; 90%</td>
+                    <td><input type="text" id="kpi_productivity" placeholder="e.g. 94%"></td>
+                </tr>
+                <tr>
+                    <td>In-Office Shrinkage (%)</td>
+                    <td>&lt; 12%</td>
+                    <td><input type="text" id="kpi_shrinkage" placeholder="e.g. 10%"></td>
+                </tr>
+                <tr>
+                    <td>Absence (%)</td>
+                    <td>&lt; 8%</td>
+                    <td><input type="text" id="kpi_absence" placeholder="e.g. 2%"></td>
+                </tr>
+                <tr>
+                    <td>CSAT Score - Overall (%)</td>
+                    <td>68%</td>
+                    <td><input type="text" id="kpi_csat_overall" placeholder="e.g. 72%"></td>
+                </tr>
+                <tr>
+                    <td>CSAT Score - Booking (%)</td>
+                    <td>70%</td>
+                    <td><input type="text" id="kpi_csat_booking" placeholder="e.g. 75%"></td>
+                </tr>
+                <tr>
+                    <td>CSAT Score - English (%)</td>
+                    <td>65%</td>
+                    <td><input type="text" id="kpi_csat_english" placeholder="e.g. 68%"></td>
+                </tr>
+                <tr>
+                    <td>Quality Scores (%)</td>
+                    <td>92.5%</td>
+                    <td><input type="text" id="kpi_quality" placeholder="e.g. 95%"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Free Text Fields -->
+        <div class="section-title">Qualitative Feedback</div>
+
+        <div class="form-group">
+            <label for="observations">Observations (Enter each bullet on a new line)</label>
+            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="• Key strength noted in calls&#10;• Need improvement in hold time"></textarea>
+            <button type="button" class="btn-fix" onclick="correctText('observations')">✨ Fix Grammar & Spelling</button>
+        </div>
+
+        <div class="form-group">
+            <label for="feedback">Feedback / Appreciation (Enter each bullet on a new line)</label>
+            <textarea id="feedback" class="bullet-input" spellcheck="true" placeholder="• Great teamwork shown during peak hours&#10;• Appreciated by customer for quick resolution"></textarea>
+            <button type="button" class="btn-fix" onclick="correctText('feedback')">✨ Fix Grammar & Spelling</button>
+        </div>
+
+        <!-- Buttons -->
+        <div class="btn-container">
+            <button type="button" class="btn-secondary" onclick="clearForm()">Clear Everything</button>
+            <button type="button" class="btn-primary" onclick="generateEmailPreview()">Generate Email Summary</button>
+        </div>
+    </form>
+
+    <!-- Email Output Preview -->
+    <div id="emailPreview">
+        <h2>Formatted Summary (Ready to Copy)</h2>
+        <p>Click the button below, then open your email client and paste (Ctrl+V or Cmd+V) directly into the email body.</p>
+        
+        <div id="emailContent">
+            <!-- Dynamic Content Injected Here -->
+        </div>
+
+        <div class="btn-container">
+            <button type="button" class="btn-primary" onclick="copyToClipboard()">📋 Copy Email Format</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('oneOnOneDate').value = today;
+        
+        const dateObj = new Date();
+        const currentMonth = dateObj.toLocaleString('default', { month: 'Long' });
+        document.getElementById('monthSelect').value = currentMonth;
+        document.getElementById('yearInput').value = dateObj.getFullYear();
+    };
+
+    function correctText(elementId) {
+        let field = document.getElementById(elementId);
+        let text = field.value;
+
+        if (!text.trim()) return;
+
+        let corrected = text
+            .replace(/(^\s*|[.!?]\s+)([a-z])/g, (m, p1, p2) => p1 + p2.toUpperCase())
+            .replace(/\bteh\b/gi, "the")
+            .replace(/\brecieve\b/gi, "receive")
+            .replace(/\bi\b/g, "I")
+            .replace(/\btaht\b/gi, "that")
+            .replace(/\bacording\b/gi, "according")
+            .replace(/\bseperated\b/gi, "separated");
+
+        field.value = corrected;
+        alert("Basic capitalization and common typos corrected!");
+    }
+
+    function formatBulletList(rawText) {
+        if (!rawText.trim()) return '<li>None</li>';
+        const lines = rawText.split('\n').filter(line => line.trim() !== '');
+        return lines.map(line => {
+            let cleanLine = line.replace(/^[•\-\*]\s*/, '');
+            return `<li>${cleanLine}</li>`;
+        }).join('');
+    }
+
+    function generateEmailPreview() {
+        const fullName = document.getElementById('agentName').value.trim() || 'Agent';
+        // Extract the first name from the entered full name
+        const firstName = fullName.split(' ')[0];
+        
+        const lob = document.getElementById('lob').value || 'N/A';
+        const month = document.getElementById('monthSelect').value;
+        const year = document.getElementById('yearInput').value;
+        const date = document.getElementById('oneOnOneDate').value;
+
+        const emailHTML = `
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333; max-width: 650px;">
+                <p style="font-size: 16px; margin-bottom: 15px;">Hi <strong>${firstName}</strong>,</p>
+                <p>Please find below the performance summary from our 1-on-1 discussion for <strong>${month} ${year}</strong>.</p>
+                
+                <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-top: 20px;">Monthly 1-on-1 Summary</h3>
+                
+                <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
+                    <tr><td><strong>Agent Name:</strong> ${fullName}</td><td><strong>LOB:</strong> ${lob}</td></tr>
+                    <tr><td><strong>Period:</strong> ${month} ${year}</td><td><strong>Date:</strong> ${date}</td></tr>
+                </table>
+
+                <h3 style="color: #2c3e50; margin-top: 15px;">KPI Summary</h3>
+                <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border-color: #ddd;">
+                    <thead style="background-color: #f2f2f2;">
+                        <tr>
+                            <th>Metric</th>
+                            <th>Target</th>
+                            <th>Actual Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>AHT</td><td>1017 secs</td><td>${document.getElementById('kpi_aht').value || 'N/A'}</td></tr>
+                        <tr><td>Transfers</td><td>&lt; 4%</td><td>${document.getElementById('kpi_transfers').value || 'N/A'}</td></tr>
+                        <tr><td>Support Placement</td><td>&lt; 5%</td><td>${document.getElementById('kpi_support').value || 'N/A'}</td></tr>
+                        <tr><td>Productivity</td><td>&gt; 90%</td><td>${document.getElementById('kpi_productivity').value || 'N/A'}</td></tr>
+                        <tr><td>In-Office Shrinkage</td><td>&lt; 12%</td><td>${document.getElementById('kpi_shrinkage').value || 'N/A'}</td></tr>
+                        <tr><td>Absence</td><td>&lt; 8%</td><td>${document.getElementById('kpi_absence').value || 'N/A'}</td></tr>
+                        <tr><td>CSAT Score - Overall</td><td>68%</td><td>${document.getElementById('kpi_csat_overall').value || 'N/A'}</td></tr>
+                        <tr><td>CSAT Score - Booking</td><td>70%</td><td>${document.getElementById('kpi_csat_booking').value || 'N/A'}</td></tr>
+                        <tr><td>CSAT Score - English</td><td>65%</td><td>${document.getElementById('kpi_csat_english').value || 'N/A'}</td></tr>
+                        <tr><td>Quality Scores</td><td>92.5%</td><td>${document.getElementById('kpi_quality').value || 'N/A'}</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 style="color: #2c3e50; margin-top: 15px;">Observations</h3>
+                <ul style="padding-left: 20px;">
+                    ${formatBulletList(document.getElementById('observations').value)}
+                </ul>
+
+                <h3 style="color: #2c3e50; margin-top: 15px;">Feedback & Appreciation</h3>
+                <ul style="padding-left: 20px;">
+                    ${formatBulletList(document.getElementById('feedback').value)}
+                </ul>
+            </div>
+        `;
+
+        document.getElementById('emailContent').innerHTML = emailHTML;
+        document.getElementById('emailPreview').style.display = 'block';
+        document.getElementById('emailPreview').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyToClipboard() {
+        const emailDiv = document.getElementById('emailContent');
+        const range = document.createRange();
+        range.selectNode(emailDiv);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        
+        try {
+            document.execCommand('copy');
+            alert('Formatted summary copied! You can now paste (Ctrl+V) directly into your email body.');
+        } catch (err) {
+            alert('Failed to copy. Please manually select and copy the text.');
+        }
+        window.getSelection().removeAllRanges();
+    }
+
+    function clearForm() {
+        if (confirm("Are you sure you want to clear all fields?")) {
+            document.getElementById('oneOnOneForm').reset();
+            document.getElementById('emailPreview').style.display = 'none';
+            window.onload();
+        }
+    }
+</script>
+
+</body>
+</html>
