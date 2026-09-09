@@ -10,6 +10,8 @@
             --accent-color: #3498db;
             --bg-color: #f8f9fa;
             --border-color: #dcdfe6;
+            --met-color: #27ae60;
+            --not-met-color: #c0392b;
         }
 
         body {
@@ -21,7 +23,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
             background: #ffffff;
             padding: 30px;
@@ -79,11 +81,6 @@
             font-size: 0.95rem;
         }
 
-        input[readonly] {
-            background-color: #eef2f5;
-            color: #666;
-        }
-
         .kpi-table {
             width: 100%;
             border-collapse: collapse;
@@ -101,9 +98,28 @@
             color: var(--primary-color);
         }
 
+        .kpi-input {
+            width: 90%;
+            font-weight: bold;
+        }
+
+        .status-cell {
+            font-weight: bold;
+        }
+
+        .met-text {
+            color: var(--met-color) !important;
+            font-weight: bold;
+        }
+
+        .not-met-text {
+            color: var(--not-met-color) !important;
+            font-weight: bold;
+        }
+
         .bullet-input {
             width: 100%;
-            height: 100px;
+            height: 140px;
             box-sizing: border-box;
             resize: vertical;
         }
@@ -185,7 +201,7 @@
             </div>
             <div class="form-group">
                 <label for="lob">Line of Business (LOB) *</label>
-                <input type="text" id="lob" required placeholder="e.g. Customer Support, Billing">
+                <input type="text" id="lob" required placeholder="e.g. Customer Support">
             </div>
         </div>
 
@@ -218,68 +234,79 @@
                     <th>Metric</th>
                     <th>Target</th>
                     <th>Actual Score</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr data-kpi="AHT" data-type="num" data-target="1017" data-dir="less">
                     <td>AHT (seconds)</td>
                     <td>1017 secs</td>
-                    <td><input type="number" id="kpi_aht" placeholder="e.g. 980"></td>
+                    <td><input type="text" id="kpi_aht" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 980"></td>
+                    <td id="status_aht" class="status-cell">-</td>
                 </tr>
-                <tr>
+                <tr data-kpi="Transfers" data-type="pct" data-target="4" data-dir="less">
                     <td>Transfers (%)</td>
                     <td>&lt; 4%</td>
-                    <td><input type="text" id="kpi_transfers" placeholder="e.g. 3.2%"></td>
+                    <td><input type="text" id="kpi_transfers" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 3.2"></td>
+                    <td id="status_transfers" class="status-cell">-</td>
                 </tr>
-                <tr>
+                <tr data-kpi="Support Placement" data-type="pct" data-target="5" data-dir="less">
                     <td>Support Placement (%)</td>
                     <td>&lt; 5%</td>
-                    <td><input type="text" id="kpi_support" placeholder="e.g. 4.1%"></td>
+                    <td><input type="text" id="kpi_support" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 4.1"></td>
+                    <td id="status_support" class="status-cell">-</td>
                 </tr>
-                <tr>
+                <tr data-kpi="Productivity" data-type="pct" data-target="90" data-dir="more">
                     <td>Productivity (%)</td>
                     <td>&gt; 90%</td>
-                    <td><input type="text" id="kpi_productivity" placeholder="e.g. 94%"></td>
+                    <td><input type="text" id="kpi_productivity" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 94"></td>
+                    <td id="status_productivity" class="status-cell">-</td>
                 </tr>
-                <tr>
+                <tr data-kpi="In-Office Shrinkage" data-type="pct" data-target="12" data-dir="less">
                     <td>In-Office Shrinkage (%)</td>
                     <td>&lt; 12%</td>
-                    <td><input type="text" id="kpi_shrinkage" placeholder="e.g. 10%"></td>
+                    <td><input type="text" id="kpi_shrinkage" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 10"></td>
+                    <td id="status_shrinkage" class="status-cell">-</td>
                 </tr>
-                <tr>
+                <tr data-kpi="Absence" data-type="pct" data-target="8" data-dir="less">
                     <td>Absence (%)</td>
                     <td>&lt; 8%</td>
-                    <td><input type="text" id="kpi_absence" placeholder="e.g. 2%"></td>
+                    <td><input type="text" id="kpi_absence" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 2"></td>
+                    <td id="status_absence" class="status-cell">-</td>
                 </tr>
-                <tr>
+                <tr data-kpi="CSAT Overall" data-type="pct" data-target="68" data-dir="more">
                     <td>CSAT Score - Overall (%)</td>
                     <td>68%</td>
-                    <td><input type="text" id="kpi_csat_overall" placeholder="e.g. 72%"></td>
+                    <td><input type="text" id="kpi_csat_overall" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 72"></td>
+                    <td id="status_csat_overall" class="status-cell">-</td>
                 </tr>
-                <tr>
+                <tr data-kpi="CSAT Booking" data-type="pct" data-target="70" data-dir="more">
                     <td>CSAT Score - Booking (%)</td>
                     <td>70%</td>
-                    <td><input type="text" id="kpi_csat_booking" placeholder="e.g. 75%"></td>
+                    <td><input type="text" id="kpi_csat_booking" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 75"></td>
+                    <td id="status_csat_booking" class="status-cell">-</td>
                 </tr>
-                <tr>
+                <tr data-kpi="CSAT English" data-type="pct" data-target="65" data-dir="more">
                     <td>CSAT Score - English (%)</td>
                     <td>65%</td>
-                    <td><input type="text" id="kpi_csat_english" placeholder="e.g. 68%"></td>
+                    <td><input type="text" id="kpi_csat_english" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 68"></td>
+                    <td id="status_csat_english" class="status-cell">-</td>
                 </tr>
-                <tr>
+                <tr data-kpi="Quality Scores" data-type="pct" data-target="92.5" data-dir="more">
                     <td>Quality Scores (%)</td>
                     <td>92.5%</td>
-                    <td><input type="text" id="kpi_quality" placeholder="e.g. 95%"></td>
+                    <td><input type="text" id="kpi_quality" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 95"></td>
+                    <td id="status_quality" class="status-cell">-</td>
                 </tr>
             </tbody>
         </table>
 
         <!-- Free Text Fields -->
-        <div class="section-title">Qualitative Feedback</div>
+        <div class="section-title">Qualitative Observations & Feedback</div>
 
         <div class="form-group">
-            <label for="observations">Observations (Enter each bullet on a new line)</label>
-            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="• Key strength noted in calls&#10;• Need improvement in hold time"></textarea>
+            <label for="observations">Observations (Auto-generated KPI Status + Supervisor Notes below)</label>
+            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="KPI observation summary will automatically appear here..."></textarea>
             <button type="button" class="btn-fix" onclick="correctText('observations')">✨ Fix Grammar & Spelling</button>
         </div>
 
@@ -322,6 +349,84 @@
         document.getElementById('yearInput').value = dateObj.getFullYear();
     };
 
+    function processKPI(input) {
+        let val = input.value.trim();
+        if (!val) return;
+
+        const tr = input.closest('tr');
+        const type = tr.dataset.type;
+        const target = parseFloat(tr.dataset.target);
+        const dir = tr.dataset.dir;
+        const statusCell = tr.querySelector('.status-cell');
+
+        // Extract raw number
+        let numVal = parseFloat(val.replace(/[^\d.]/g, ''));
+        if (isNaN(numVal)) return;
+
+        // Auto format actual score text
+        if (type === 'pct') {
+            input.value = numVal + '%';
+        } else {
+            input.value = numVal + (type === 'num' && tr.dataset.kpi === 'AHT' ? ' secs' : '');
+        }
+
+        // Determine Met / Not Met status
+        let isMet = false;
+        if (dir === 'less') {
+            isMet = numVal <= target;
+        } else {
+            isMet = numVal >= target;
+        }
+
+        // Apply Styles to input and status cell
+        input.classList.remove('met-text', 'not-met-text');
+        statusCell.classList.remove('met-text', 'not-met-text');
+
+        if (isMet) {
+            input.classList.add('met-text');
+            statusCell.classList.add('met-text');
+            statusCell.textContent = 'MET';
+        } else {
+            input.classList.add('not-met-text');
+            statusCell.classList.add('not-met-text');
+            statusCell.textContent = 'NOT MET';
+        }
+
+        updateAutoObservations();
+    }
+
+    function updateAutoObservations() {
+        const obsField = document.getElementById('observations');
+        let currentText = obsField.value;
+        
+        // Preserve supervisor notes if they entered any below a separator line
+        let supervisorNotes = "";
+        if (currentText.includes("--- Supervisor Additional Notes ---")) {
+            supervisorNotes = currentText.split("--- Supervisor Additional Notes ---")[1];
+        }
+
+        let autoBullets = [];
+        const rows = document.querySelectorAll('.kpi-table tbody tr');
+
+        rows.forEach(tr => {
+            const kpiName = tr.dataset.kpi;
+            const input = tr.querySelector('.kpi-input');
+            const statusCell = tr.querySelector('.status-cell');
+            
+            if (input.value.trim() !== '' && statusCell.textContent !== '-') {
+                autoBullets.push(`• ${kpiName}: ${input.value.trim()} - ${statusCell.textContent}`);
+            }
+        });
+
+        let newText = autoBullets.join('\n');
+        newText += '\n\n--- Supervisor Additional Notes ---\n';
+        if (supervisorNotes) {
+            newText += supervisorNotes.trim();
+        }
+
+        obsField.value = newText;
+    }
+
     function correctText(elementId) {
         let field = document.getElementById(elementId);
         let text = field.value;
@@ -338,7 +443,7 @@
             .replace(/\bseperated\b/gi, "separated");
 
         field.value = corrected;
-        alert("Basic capitalization and common typos corrected!");
+        alert("Capitalization and basic spelling corrected!");
     }
 
     function formatBulletList(rawText) {
@@ -346,19 +451,41 @@
         const lines = rawText.split('\n').filter(line => line.trim() !== '');
         return lines.map(line => {
             let cleanLine = line.replace(/^[•\-\*]\s*/, '');
+            if(cleanLine.startsWith("---")) return `<br><strong>${cleanLine}</strong>`;
             return `<li>${cleanLine}</li>`;
         }).join('');
     }
 
     function generateEmailPreview() {
         const fullName = document.getElementById('agentName').value.trim() || 'Agent';
-        // Extract the first name from the entered full name
         const firstName = fullName.split(' ')[0];
-        
         const lob = document.getElementById('lob').value || 'N/A';
         const month = document.getElementById('monthSelect').value;
         const year = document.getElementById('yearInput').value;
         const date = document.getElementById('oneOnOneDate').value;
+
+        // Build Table Rows dynamically for email
+        let kpiRowsHTML = '';
+        document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
+            const name = tr.cells[0].innerText;
+            const target = tr.cells[1].innerText;
+            const inputVal = tr.querySelector('.kpi-input').value || 'N/A';
+            const statusCell = tr.querySelector('.status-cell');
+            const statusText = statusCell.textContent;
+
+            let colorStyle = '#333';
+            if (statusText === 'MET') colorStyle = '#27ae60';
+            if (statusText === 'NOT MET') colorStyle = '#c0392b';
+
+            kpiRowsHTML += `
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${name}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${target}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: ${colorStyle};">${inputVal}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: ${colorStyle};">${statusText}</td>
+                </tr>
+            `;
+        });
 
         const emailHTML = `
             <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333; max-width: 650px;">
@@ -368,30 +495,22 @@
                 <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-top: 20px;">Monthly 1-on-1 Summary</h3>
                 
                 <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
-                    <tr><td><strong>Agent Name:</strong> ${fullName}</td><td><strong>LOB:</strong> ${lob}</td></tr>
-                    <tr><td><strong>Period:</strong> ${month} ${year}</td><td><strong>Date:</strong> ${date}</td></tr>
+                    <tr><td style="padding: 4px 0;"><strong>Agent Name:</strong> ${fullName}</td><td style="padding: 4px 0;"><strong>LOB:</strong> ${lob}</td></tr>
+                    <tr><td style="padding: 4px 0;"><strong>Period:</strong> ${month} ${year}</td><td style="padding: 4px 0;"><strong>Date:</strong> ${date}</td></tr>
                 </table>
 
-                <h3 style="color: #2c3e50; margin-top: 15px;">KPI Summary</h3>
+                <h3 style="color: #2c3e50; margin-top: 15px;">KPI Performance Summary</h3>
                 <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border-color: #ddd;">
                     <thead style="background-color: #f2f2f2;">
                         <tr>
                             <th>Metric</th>
                             <th>Target</th>
                             <th>Actual Score</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>AHT</td><td>1017 secs</td><td>${document.getElementById('kpi_aht').value || 'N/A'}</td></tr>
-                        <tr><td>Transfers</td><td>&lt; 4%</td><td>${document.getElementById('kpi_transfers').value || 'N/A'}</td></tr>
-                        <tr><td>Support Placement</td><td>&lt; 5%</td><td>${document.getElementById('kpi_support').value || 'N/A'}</td></tr>
-                        <tr><td>Productivity</td><td>&gt; 90%</td><td>${document.getElementById('kpi_productivity').value || 'N/A'}</td></tr>
-                        <tr><td>In-Office Shrinkage</td><td>&lt; 12%</td><td>${document.getElementById('kpi_shrinkage').value || 'N/A'}</td></tr>
-                        <tr><td>Absence</td><td>&lt; 8%</td><td>${document.getElementById('kpi_absence').value || 'N/A'}</td></tr>
-                        <tr><td>CSAT Score - Overall</td><td>68%</td><td>${document.getElementById('kpi_csat_overall').value || 'N/A'}</td></tr>
-                        <tr><td>CSAT Score - Booking</td><td>70%</td><td>${document.getElementById('kpi_csat_booking').value || 'N/A'}</td></tr>
-                        <tr><td>CSAT Score - English</td><td>65%</td><td>${document.getElementById('kpi_csat_english').value || 'N/A'}</td></tr>
-                        <tr><td>Quality Scores</td><td>92.5%</td><td>${document.getElementById('kpi_quality').value || 'N/A'}</td></tr>
+                        ${kpiRowsHTML}
                     </tbody>
                 </table>
 
@@ -431,6 +550,13 @@
     function clearForm() {
         if (confirm("Are you sure you want to clear all fields?")) {
             document.getElementById('oneOnOneForm').reset();
+            document.querySelectorAll('.status-cell').forEach(el => {
+                el.textContent = '-';
+                el.className = 'status-cell';
+            });
+            document.querySelectorAll('.kpi-input').forEach(el => {
+                el.className = 'kpi-input';
+            });
             document.getElementById('emailPreview').style.display = 'none';
             window.onload();
         }
