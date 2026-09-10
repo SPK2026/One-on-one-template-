@@ -179,7 +179,7 @@
 
         #emailContent {
             font-family: Arial, sans-serif;
-            line-height: 1.5;
+            line-height: 1.6;
             color: #333;
             background: #ffffff;
             padding: 20px;
@@ -532,6 +532,7 @@
 
         let target = parseFloat(tr.dataset.target);
         
+        // Handle dynamic inputs for AHT and In-Office Shrinkage targets
         if (tr.id === 'row_aht') {
             target = parseFloat(document.getElementById('target_aht').value);
         } else if (tr.id === 'row_shrinkage') {
@@ -625,16 +626,12 @@
     }
 
     function formatBulletList(rawText) {
-        if (!rawText || !rawText.trim()) return '<div style="color: #888; font-style: italic;">None provided</div>';
+        if (!rawText.trim()) return '<li>None</li>';
         const lines = rawText.split('\n').filter(line => line.trim() !== '');
         return lines.map(line => {
             let cleanLine = line.replace(/^[•\-\*]\s*/, '');
-            if(cleanLine.startsWith("---")) {
-                return `<div style="font-weight: bold; color: #2c3e50; margin-top: 10px; margin-bottom: 4px;">${cleanLine.replace(/[\-]/g, '').trim()}</div>`;
-            }
-            return `<div style="margin-bottom: 5px; position: relative; padding-left: 15px;">
-                        <span style="position: absolute; left: 0; color: #3498db; font-weight: bold;">•</span>${cleanLine}
-                    </div>`;
+            if(cleanLine.startsWith("---")) return `<br><strong>${cleanLine}</strong>`;
+            return `<li>${cleanLine}</li>`;
         }).join('');
     }
 
@@ -645,44 +642,34 @@
         const month = document.getElementById('monthSelect').value;
         const year = document.getElementById('yearInput').value;
         const date = document.getElementById('oneOnOneDate').value;
-        const voaText = document.getElementById('voa').value || 'None provided';
+        const voaText = document.getElementById('voa').value || 'N/A';
 
-        // Compact Discussion Topics HTML
+        // Discussion Questions Table HTML for Email
         let discRowsHTML = '';
         document.querySelectorAll('.disc-row').forEach(row => {
             const cat = row.dataset.category;
             const qSelect = row.querySelector('.q-select');
             const qRating = row.querySelector('.q-rating');
             
-            if (qSelect.value) {
-                const qVal = qSelect.value;
-                const rVal = qRating.value ? qRating.value : '-';
-                
-                let ratingBadgeColor = '#95a5a6';
-                if(rVal === '4') ratingBadgeColor = '#27ae60';
-                if(rVal === '3') ratingBadgeColor = '#2980b9';
-                if(rVal === '2') ratingBadgeColor = '#f39c12';
-                if(rVal === '1') ratingBadgeColor = '#c0392b';
+            const qVal = qSelect.value ? qSelect.value : 'No question selected';
+            const rVal = qRating.value ? `${qRating.value} / 4` : 'N/A';
 
+            if (qSelect.value) {
                 discRowsHTML += `
-                    <tr style="border-bottom: 1px solid #edf2f7;">
-                        <td style="padding: 6px 10px; font-size: 12px; font-weight: bold; color: #4a5568; background-color: #f8fafc;">${cat}</td>
-                        <td style="padding: 6px 10px; font-size: 12px; color: #2d3748;">${qVal}</td>
-                        <td style="padding: 6px 10px; text-align: center;">
-                            <span style="display: inline-block; padding: 2px 8px; border-radius: 12px; background-color: ${ratingBadgeColor}; color: #ffffff; font-size: 11px; font-weight: bold;">
-                                ${rVal} / 4
-                            </span>
-                        </td>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>${cat}</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${qVal}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><strong>${rVal}</strong></td>
                     </tr>
                 `;
             }
         });
 
         if (!discRowsHTML) {
-            discRowsHTML = `<tr><td colspan="3" style="padding: 8px 10px; font-size: 12px; color: #a0aec0; text-align: center;">No discussion questions selected</td></tr>`;
+            discRowsHTML = `<tr><td colspan="3" style="padding: 8px; border: 1px solid #ddd;">No discussion questions selected.</td></tr>`;
         }
 
-        // Compact KPI Rows HTML
+        // KPI Table HTML for Email
         let kpiRowsHTML = '';
         document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
             const name = tr.cells[0].innerText;
@@ -691,7 +678,7 @@
             const targetInput = tr.cells[1].querySelector('input');
             if (targetInput) {
                 if (tr.id === 'row_aht') {
-                    target = targetInput.value ? targetInput.value + 's' : '-';
+                    target = targetInput.value ? targetInput.value + ' secs' : '-';
                 } else if (tr.id === 'row_shrinkage' || tr.id === 'row_loss') {
                     target = targetInput.value ? targetInput.value + '%' : '-';
                 } else {
@@ -705,120 +692,75 @@
             const statusCell = tr.cells[3];
             const statusText = statusCell ? statusCell.textContent : '-';
 
-            let badgeStyle = 'background-color: #edf2f7; color: #718096;';
-            if (statusText === 'MET') badgeStyle = 'background-color: #d4edda; color: #155724;';
-            if (statusText === 'NOT MET') badgeStyle = 'background-color: #f8d7da; color: #721c24;';
+            let colorStyle = '#333';
+            if (statusText === 'MET') colorStyle = '#27ae60';
+            if (statusText === 'NOT MET') colorStyle = '#c0392b';
 
             kpiRowsHTML += `
-                <tr style="border-bottom: 1px solid #edf2f7;">
-                    <td style="padding: 6px 10px; font-size: 12px; color: #2d3748; font-weight: 500;">${name}</td>
-                    <td style="padding: 6px 10px; font-size: 12px; color: #718096; text-align: center;">${target}</td>
-                    <td style="padding: 6px 10px; font-size: 12px; font-weight: bold; color: #1a202c; text-align: center;">${inputVal}</td>
-                    <td style="padding: 6px 10px; text-align: center;">
-                        <span style="display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; ${badgeStyle}">
-                            ${statusText}
-                        </span>
-                    </td>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${name}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${target}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: ${colorStyle};">${inputVal}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: ${colorStyle};">${statusText}</td>
                 </tr>
             `;
         });
 
         const emailHTML = `
-            <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 620px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333; max-width: 650px;">
+                <p style="font-size: 16px; margin-bottom: 15px;">Hi <strong>${firstName}</strong>,</p>
+                <p>Please find below the performance summary from our 1-on-1 discussion for <strong>${month} ${year}</strong>.</p>
                 
-                <!-- Compact Header -->
-                <div style="background-color: #2c3e50; padding: 16px 20px; color: #ffffff;">
-                    <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #3498db; font-weight: bold;">Monthly 1-on-1 Performance Review</div>
-                    <div style="font-size: 20px; font-weight: bold; margin-top: 2px;">${fullName}</div>
-                    <div style="font-size: 12px; color: #cbd5e0; margin-top: 4px;">
-                        <span>LOB: <strong>${lob}</strong></span> | 
-                        <span>Period: <strong>${month} ${year}</strong></span> | 
-                        <span>Date: <strong>${date}</strong></span>
-                    </div>
-                </div>
+                <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-top: 20px;">Monthly 1-on-1 Summary</h3>
+                
+                <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
+                    <tr><td style="padding: 4px 0;"><strong>Agent Name:</strong> ${fullName}</td><td style="padding: 4px 0;"><strong>LOB:</strong> ${lob}</td></tr>
+                    <tr><td style="padding: 4px 0;"><strong>Period:</strong> ${month} ${year}</td><td style="padding: 4px 0;"><strong>Date:</strong> ${date}</td></tr>
+                </table>
 
-                <div style="padding: 16px 20px;">
-                    <p style="font-size: 13px; color: #4a5568; margin-top: 0; margin-bottom: 14px;">
-                        Hi <strong>${firstName}</strong>, here is the compact summary of our 1-on-1 session for ${month} ${year}.
-                    </p>
-
-                    <!-- Discussion & Ratings Card -->
-                    <div style="margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
-                        <div style="background-color: #f7fafc; padding: 6px 12px; border-bottom: 1px solid #e2e8f0; font-size: 12px; font-weight: bold; color: #2d3748;">
-                            💬 Discussion Topics & Ratings
-                        </div>
-                        <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background-color: #edf2f7; font-size: 11px; text-transform: uppercase; color: #718096; text-align: left;">
-                                    <th style="padding: 4px 10px; width: 25%;">Type</th>
-                                    <th style="padding: 4px 10px; width: 60%;">Selected Question</th>
-                                    <th style="padding: 4px 10px; width: 15%; text-align: center;">Rating</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${discRowsHTML}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Voice of Agent Card -->
-                    <div style="margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px; background-color: #fafbfd;">
-                        <div style="font-size: 12px; font-weight: bold; color: #2c3e50; margin-bottom: 6px;">
-                            🎙️ Voice of Agent (VOA)
-                        </div>
-                        <div style="font-size: 12px; color: #4a5568; line-height: 1.4;">
-                            ${formatBulletList(voaText)}
-                        </div>
-                    </div>
-
-                    <!-- KPI Performance Card -->
-                    <div style="margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
-                        <div style="background-color: #f7fafc; padding: 6px 12px; border-bottom: 1px solid #e2e8f0; font-size: 12px; font-weight: bold; color: #2d3748;">
-                            📊 KPI Performance Metrics
-                        </div>
-                        <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background-color: #edf2f7; font-size: 11px; text-transform: uppercase; color: #718096;">
-                                    <th style="padding: 5px 10px; text-align: left;">Metric</th>
-                                    <th style="padding: 5px 10px; text-align: center;">Target</th>
-                                    <th style="padding: 5px 10px; text-align: center;">Actual</th>
-                                    <th style="padding: 5px 10px; text-align: center;">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${kpiRowsHTML}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Observations & Feedback Grid -->
-                    <table border="0" cellpadding="0" cellspacing="0" style="width: 100%; margin-top: 10px;">
+                <h3 style="color: #2c3e50; margin-top: 15px;">1-on-1 Discussion Topics & Ratings</h3>
+                <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border-color: #ddd; margin-bottom: 15px;">
+                    <thead style="background-color: #f2f2f2;">
                         <tr>
-                            <td style="vertical-align: top; padding-right: 6px; width: 50%;">
-                                <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px; height: 100%; background-color: #ffffff;">
-                                    <div style="font-size: 12px; font-weight: bold; color: #2c3e50; margin-bottom: 6px;">📝 Observations</div>
-                                    <div style="font-size: 12px; color: #4a5568; line-height: 1.4;">
-                                        ${formatBulletList(document.getElementById('observations').value)}
-                                    </div>
-                                </div>
-                            </td>
-                            <td style="vertical-align: top; padding-left: 6px; width: 50%;">
-                                <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px; height: 100%; background-color: #ffffff;">
-                                    <div style="font-size: 12px; font-weight: bold; color: #2c3e50; margin-bottom: 6px;">👏 Feedback & Appreciation</div>
-                                    <div style="font-size: 12px; color: #4a5568; line-height: 1.4;">
-                                        ${formatBulletList(document.getElementById('feedback').value)}
-                                    </div>
-                                </div>
-                            </td>
+                            <th style="width: 25%;">Category</th>
+                            <th style="width: 60%;">Discussion Question</th>
+                            <th style="width: 15%;">Rating</th>
                         </tr>
-                    </table>
+                    </thead>
+                    <tbody>
+                        ${discRowsHTML}
+                    </tbody>
+                </table>
 
-                </div>
+                <h3 style="color: #2c3e50; margin-top: 15px;">Voice of Agent (VOA)</h3>
+                <ul style="padding-left: 20px;">
+                    ${formatBulletList(voaText)}
+                </ul>
 
-                <!-- Footer -->
-                <div style="background-color: #f7fafc; padding: 10px 20px; font-size: 11px; color: #a0aec0; text-align: center; border-top: 1px solid #e2e8f0;">
-                    Automated 1-on-1 Performance Summary • Keep up the great work!
-                </div>
+                <h3 style="color: #2c3e50; margin-top: 15px;">KPI Performance Summary</h3>
+                <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border-color: #ddd;">
+                    <thead style="background-color: #f2f2f2;">
+                        <tr>
+                            <th>Metric</th>
+                            <th>Target</th>
+                            <th>Actual Score</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${kpiRowsHTML}
+                    </tbody>
+                </table>
+
+                <h3 style="color: #2c3e50; margin-top: 15px;">Observations</h3>
+                <ul style="padding-left: 20px;">
+                    ${formatBulletList(document.getElementById('observations').value)}
+                </ul>
+
+                <h3 style="color: #2c3e50; margin-top: 15px;">Feedback & Appreciation</h3>
+                <ul style="padding-left: 20px;">
+                    ${formatBulletList(document.getElementById('feedback').value)}
+                </ul>
             </div>
         `;
 
@@ -836,7 +778,7 @@
         
         try {
             document.execCommand('copy');
-            alert('Compact email summary copied! You can now paste (Ctrl+V) directly into your email body.');
+            alert('Formatted summary copied! You can now paste (Ctrl+V) directly into your email body.');
         } catch (err) {
             alert('Failed to copy. Please manually select and copy the text.');
         }
