@@ -81,19 +81,20 @@
             font-size: 0.95rem;
         }
 
-        .kpi-table {
+        .discussion-table, .kpi-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
 
+        .discussion-table th, .discussion-table td,
         .kpi-table th, .kpi-table td {
             border: 1px solid var(--border-color);
             padding: 10px;
             text-align: left;
         }
 
-        .kpi-table th {
+        .discussion-table th, .kpi-table th {
             background-color: #f1f4f8;
             color: var(--primary-color);
         }
@@ -119,7 +120,7 @@
 
         .bullet-input {
             width: 100%;
-            height: 140px;
+            height: 120px;
             box-sizing: border-box;
             resize: vertical;
         }
@@ -192,6 +193,7 @@
     <h1>Monthly 1-on-1 Performance Form</h1>
 
     <form id="oneOnOneForm">
+        <!-- Agent Details -->
         <div class="section-title">General Information</div>
         <div class="grid-2">
             <div class="form-group">
@@ -200,7 +202,11 @@
             </div>
             <div class="form-group">
                 <label for="lob">Line of Business (LOB) *</label>
-                <input type="text" id="lob" required placeholder="e.g. Customer Support">
+                <select id="lob" required>
+                    <option value="">Select LOB</option>
+                    <option value="FL Chat">FL Chat</option>
+                    <option value="FL Voice">FL Voice</option>
+                </select>
             </div>
         </div>
 
@@ -225,6 +231,107 @@
             </div>
         </div>
 
+        <!-- Discussion & VOA Section (Above KPI Table) -->
+        <div class="section-title">Discussion Topics & Voice of Agent (VOA)</div>
+        <table class="discussion-table">
+            <thead>
+                <tr>
+                    <th style="width: 20%;">Type</th>
+                    <th style="width: 65%;">Select Question</th>
+                    <th style="width: 15%;">Rating (1-4)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="disc-row" data-category="Engagement & Well-being">
+                    <td><strong>Engagement & Well-being</strong></td>
+                    <td>
+                        <select class="q-select" style="width: 100%;">
+                            <option value="">-- Select Question --</option>
+                            <option value="Q1: How are you feeling about work overall this week/month — motivated, stressed, or somewhere in between?">Q1: How are you feeling about work overall this week/month — motivated, stressed, or somewhere in between?</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="q-rating" style="width: 100%;">
+                            <option value="">Rate</option>
+                            <option value="1">1 (Lowest)</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4 (Highest)</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="disc-row" data-category="Support">
+                    <td><strong>Support</strong></td>
+                    <td>
+                        <select class="q-select" style="width: 100%;">
+                            <option value="">-- Select Question --</option>
+                            <option value="Q1: Do you feel you had the right information and support to do your job effectively?">Q1: Do you feel you had the right information and support to do your job effectively?</option>
+                            <option value="Q2: Is there anything blocking your performance right now that we should address?">Q2: Is there anything blocking your performance right now that we should address?</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="q-rating" style="width: 100%;">
+                            <option value="">Rate</option>
+                            <option value="1">1 (Lowest)</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4 (Highest)</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="disc-row" data-category="Learning">
+                    <td><strong>Learning</strong></td>
+                    <td>
+                        <select class="q-select" style="width: 100%;">
+                            <option value="">-- Select Question --</option>
+                            <option value="Q1: What went well in your interactions this month? Any calls/chats you're particularly proud of?">Q1: What went well in your interactions this month? Any calls/chats you're particularly proud of?</option>
+                            <option value="Q2: Any challenges you faced while handling customers?">Q2: Any challenges you faced while handling customers?</option>
+                            <option value="Q3: Were there any escalations or difficult conversations you'd like feedback on?">Q3: Were there any escalations or difficult conversations you'd like feedback on?</option>
+                            <option value="Q4: Is there any skill you feel you need more coaching or practice on?">Q4: Is there any skill you feel you need more coaching or practice on?</option>
+                            <option value="Q5: Did you try any new approach or technique that worked well?">Q5: Did you try any new approach or technique that worked well?</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="q-rating" style="width: 100%;">
+                            <option value="">Rate</option>
+                            <option value="1">1 (Lowest)</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4 (Highest)</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="disc-row" data-category="Aspirations & Growth">
+                    <td><strong>Aspirations & Growth</strong></td>
+                    <td>
+                        <select class="q-select" style="width: 100%;">
+                            <option value="">-- Select Question --</option>
+                            <option value="Q1: What skill or area would you like to improve over the next month?">Q1: What skill or area would you like to improve over the next month?</option>
+                            <option value="Q2: Do you have clear understanding of how overtime works and how much you can earn approximately on monthly basis?">Q2: Do you have clear understanding of how overtime works and how much you can earn approximately on monthly basis?</option>
+                            <option value="Q3: Where do you see yourself growing in the team over the next 3–6 months?">Q3: Where do you see yourself growing in the team over the next 3–6 months?</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="q-rating" style="width: 100%;">
+                            <option value="">Rate</option>
+                            <option value="1">1 (Lowest)</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4 (Highest)</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Voice of Agent Text Area -->
+        <div class="form-group">
+            <label for="voa">Voice of Agent (VOA)</label>
+            <textarea id="voa" class="bullet-input" spellcheck="true" placeholder="Enter agent's feedback, thoughts, or comments regarding the questions above..."></textarea>
+            <button type="button" class="btn-fix" onclick="correctText('voa')">✨ Fix Grammar & Spelling</button>
+        </div>
+
+        <!-- KPI Metrics Table -->
         <div class="section-title">KPI Performance Summary</div>
         <table class="kpi-table">
             <thead>
@@ -236,27 +343,31 @@
                 </tr>
             </thead>
             <tbody>
+                <!-- Non-KPI Field: Total Transactions -->
                 <tr>
                     <td>Total Transactions</td>
                     <td>-</td>
                     <td><input type="number" id="total_transactions" oninput="calculateLossPer1k()" placeholder="e.g. 500"></td>
                     <td>-</td>
                 </tr>
+                <!-- Non-KPI Field: Total TG & RLs -->
                 <tr>
                     <td>Total TG & RLs</td>
                     <td>-</td>
                     <td><input type="number" id="total_tg_rl" oninput="calculateLossPer1k()" placeholder="e.g. 10"></td>
                     <td>-</td>
                 </tr>
+                <!-- KPI Field: Loss per 1k transactions -->
                 <tr id="row_loss" data-kpi="Loss per 1k Transactions" data-type="num" data-dir="less">
                     <td>Loss per 1k Transactions</td>
                     <td><input type="number" id="target_loss" step="any" oninput="calculateLossPer1k()" placeholder="Enter Target"></td>
                     <td><input type="text" id="kpi_loss" class="kpi-input" readonly placeholder="Auto-calculated"></td>
                     <td id="status_loss" class="status-cell">-</td>
                 </tr>
-                <tr data-kpi="AHT" data-type="num" data-target="1017" data-dir="less">
+                <!-- AHT with manual target field -->
+                <tr id="row_aht" data-kpi="AHT" data-type="num" data-dir="less">
                     <td>AHT (seconds)</td>
-                    <td>1017 secs</td>
+                    <td><input type="number" id="target_aht" oninput="processKPI(document.getElementById('kpi_aht'))" placeholder="Enter Secs"></td>
                     <td><input type="text" id="kpi_aht" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 980"></td>
                     <td id="status_aht" class="status-cell">-</td>
                 </tr>
@@ -278,15 +389,17 @@
                     <td><input type="text" id="kpi_productivity" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 94"></td>
                     <td id="status_productivity" class="status-cell">-</td>
                 </tr>
-                <tr data-kpi="In-Office Shrinkage" data-type="pct" data-target="12" data-dir="less">
+                <!-- In-Office Shrinkage with manual target field -->
+                <tr id="row_shrinkage" data-kpi="In-Office Shrinkage" data-type="pct" data-dir="less">
                     <td>In-Office Shrinkage (%)</td>
-                    <td>&lt; 12%</td>
+                    <td><input type="number" id="target_shrinkage" step="any" oninput="processKPI(document.getElementById('kpi_shrinkage'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_shrinkage" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 10"></td>
                     <td id="status_shrinkage" class="status-cell">-</td>
                 </tr>
-                <tr data-kpi="Absence" data-type="pct" data-target="8" data-dir="less">
+                <!-- Absence updated target to 12.50% -->
+                <tr data-kpi="Absence" data-type="pct" data-target="12.50" data-dir="less">
                     <td>Absence (%)</td>
-                    <td>&lt; 8%</td>
+                    <td>&lt; 12.50%</td>
                     <td><input type="text" id="kpi_absence" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 2"></td>
                     <td id="status_absence" class="status-cell">-</td>
                 </tr>
@@ -317,6 +430,7 @@
             </tbody>
         </table>
 
+        <!-- Qualitative Observations & Feedback -->
         <div class="section-title">Qualitative Observations & Feedback</div>
 
         <div class="form-group">
@@ -331,18 +445,21 @@
             <button type="button" class="btn-fix" onclick="correctText('feedback')">✨ Fix Grammar & Spelling</button>
         </div>
 
+        <!-- Buttons -->
         <div class="btn-container">
             <button type="button" class="btn-secondary" onclick="clearForm()">Clear Everything</button>
             <button type="button" class="btn-primary" onclick="generateEmailPreview()">Generate Email Summary</button>
         </div>
     </form>
 
+    <!-- Email Output Preview -->
     <div id="emailPreview">
         <h2>Formatted Summary (Ready to Copy)</h2>
         <p>Click the button below, then open your email client and paste (Ctrl+V or Cmd+V) directly into the email body.</p>
         
         <div id="emailContent">
-            </div>
+            <!-- Dynamic Content Injected Here -->
+        </div>
 
         <div class="btn-container">
             <button type="button" class="btn-primary" onclick="copyToClipboard()">📋 Copy Email Format</button>
@@ -404,14 +521,23 @@
     }
 
     function processKPI(input) {
+        if (!input) return;
         let val = input.value.trim();
         if (!val) return;
 
         const tr = input.closest('tr');
         const type = tr.dataset.type;
-        const target = parseFloat(tr.dataset.target);
         const dir = tr.dataset.dir;
         const statusCell = tr.querySelector('.status-cell');
+
+        let target = parseFloat(tr.dataset.target);
+        
+        // Handle dynamic inputs for AHT and In-Office Shrinkage targets
+        if (tr.id === 'row_aht') {
+            target = parseFloat(document.getElementById('target_aht').value);
+        } else if (tr.id === 'row_shrinkage') {
+            target = parseFloat(document.getElementById('target_shrinkage').value);
+        }
 
         let numVal = parseFloat(val.replace(/[^\d.]/g, ''));
         if (isNaN(numVal)) return;
@@ -420,6 +546,13 @@
             input.value = numVal + '%';
         } else {
             input.value = numVal + (type === 'num' && tr.dataset.kpi === 'AHT' ? ' secs' : '');
+        }
+
+        if (isNaN(target)) {
+            statusCell.textContent = '-';
+            input.classList.remove('met-text', 'not-met-text');
+            statusCell.classList.remove('met-text', 'not-met-text');
+            return;
         }
 
         let isMet = (dir === 'less') ? (numVal <= target) : (numVal >= target);
@@ -509,19 +642,50 @@
         const month = document.getElementById('monthSelect').value;
         const year = document.getElementById('yearInput').value;
         const date = document.getElementById('oneOnOneDate').value;
+        const voaText = document.getElementById('voa').value || 'N/A';
 
+        // Discussion Questions Table HTML for Email
+        let discRowsHTML = '';
+        document.querySelectorAll('.disc-row').forEach(row => {
+            const cat = row.dataset.category;
+            const qSelect = row.querySelector('.q-select');
+            const qRating = row.querySelector('.q-rating');
+            
+            const qVal = qSelect.value ? qSelect.value : 'No question selected';
+            const rVal = qRating.value ? `${qRating.value} / 4` : 'N/A';
+
+            if (qSelect.value) {
+                discRowsHTML += `
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>${cat}</strong></td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${qVal}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><strong>${rVal}</strong></td>
+                    </tr>
+                `;
+            }
+        });
+
+        if (!discRowsHTML) {
+            discRowsHTML = `<tr><td colspan="3" style="padding: 8px; border: 1px solid #ddd;">No discussion questions selected.</td></tr>`;
+        }
+
+        // KPI Table HTML for Email
         let kpiRowsHTML = '';
         document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
             const name = tr.cells[0].innerText;
             
-            // Check if cell contains target input or direct text
             let target = tr.cells[1].innerText;
             const targetInput = tr.cells[1].querySelector('input');
             if (targetInput) {
-                target = targetInput.value ? targetInput.value : '-';
+                if (tr.id === 'row_aht') {
+                    target = targetInput.value ? targetInput.value + ' secs' : '-';
+                } else if (tr.id === 'row_shrinkage' || tr.id === 'row_loss') {
+                    target = targetInput.value ? targetInput.value + '%' : '-';
+                } else {
+                    target = targetInput.value ? targetInput.value : '-';
+                }
             }
 
-            // Check input for actual score
             const actualInput = tr.cells[2].querySelector('input');
             const inputVal = actualInput ? (actualInput.value || 'N/A') : tr.cells[2].innerText;
 
@@ -553,6 +717,25 @@
                     <tr><td style="padding: 4px 0;"><strong>Agent Name:</strong> ${fullName}</td><td style="padding: 4px 0;"><strong>LOB:</strong> ${lob}</td></tr>
                     <tr><td style="padding: 4px 0;"><strong>Period:</strong> ${month} ${year}</td><td style="padding: 4px 0;"><strong>Date:</strong> ${date}</td></tr>
                 </table>
+
+                <h3 style="color: #2c3e50; margin-top: 15px;">1-on-1 Discussion Topics & Ratings</h3>
+                <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border-color: #ddd; margin-bottom: 15px;">
+                    <thead style="background-color: #f2f2f2;">
+                        <tr>
+                            <th style="width: 25%;">Category</th>
+                            <th style="width: 60%;">Discussion Question</th>
+                            <th style="width: 15%;">Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${discRowsHTML}
+                    </tbody>
+                </table>
+
+                <h3 style="color: #2c3e50; margin-top: 15px;">Voice of Agent (VOA)</h3>
+                <ul style="padding-left: 20px;">
+                    ${formatBulletList(voaText)}
+                </ul>
 
                 <h3 style="color: #2c3e50; margin-top: 15px;">KPI Performance Summary</h3>
                 <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border-color: #ddd;">
