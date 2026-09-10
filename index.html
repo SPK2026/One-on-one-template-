@@ -175,6 +175,26 @@
             align-self: flex-start;
         }
 
+        /* Subject line box styling */
+        .subject-box {
+            background: #eef7fc;
+            border: 1px solid var(--accent-color);
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .subject-text {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1rem;
+            word-break: break-all;
+        }
+
         #emailPreview {
             display: none;
             margin-top: 30px;
@@ -370,7 +390,7 @@
                     <td><input type="text" id="kpi_loss" class="kpi-input" readonly placeholder="Auto-calculated"></td>
                     <td id="status_loss" class="status-cell">-</td>
                 </tr>
-                <!-- AHT with manual target field (formatted with secs) -->
+                <!-- AHT with manual target field -->
                 <tr id="row_aht" data-kpi="AHT" data-type="num" data-dir="less">
                     <td>AHT (seconds)</td>
                     <td><input type="text" id="target_aht" onblur="formatTargetField(this, 'secs')" oninput="processKPI(document.getElementById('kpi_aht'))" placeholder="Enter Secs"></td>
@@ -389,14 +409,14 @@
                     <td><input type="text" id="kpi_support" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 4.1"></td>
                     <td id="status_support" class="status-cell">-</td>
                 </tr>
-                <!-- Productivity with manual target field (formatted with %) -->
+                <!-- Productivity with manual target field -->
                 <tr id="row_productivity" data-kpi="Productivity" data-type="pct" data-dir="more">
                     <td>Productivity (%)</td>
                     <td><input type="text" id="target_productivity" onblur="formatTargetField(this, 'pct')" oninput="processKPI(document.getElementById('kpi_productivity'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_productivity" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 94"></td>
                     <td id="status_productivity" class="status-cell">-</td>
                 </tr>
-                <!-- In-Office Shrinkage with manual target field (formatted with %) -->
+                <!-- In-Office Shrinkage with manual target field -->
                 <tr id="row_shrinkage" data-kpi="In-Office Shrinkage" data-type="pct" data-dir="less">
                     <td>In-Office Shrinkage (%)</td>
                     <td><input type="text" id="target_shrinkage" onblur="formatTargetField(this, 'pct')" oninput="processKPI(document.getElementById('kpi_shrinkage'))" placeholder="Enter Target %"></td>
@@ -462,14 +482,24 @@
     <!-- Email Output Preview -->
     <div id="emailPreview">
         <h2>Formatted Summary (Ready to Copy)</h2>
-        <p>Click the button below, then open your email client and paste (Ctrl+V or Cmd+V) directly into the email body.</p>
+        
+        <!-- Standardized Subject Line Box -->
+        <div class="subject-box">
+            <div>
+                <span style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 2px;">Email Subject Line:</span>
+                <span id="subjectText" class="subject-text">1-on-1 Performance Summary | Agent Name - LOB - Month Year</span>
+            </div>
+            <button type="button" class="btn-primary" style="font-size: 0.85rem; padding: 6px 12px; white-space: nowrap;" onclick="copySubjectLine()">📋 Copy Subject Line</button>
+        </div>
+
+        <p>Click the button below to copy the body, then paste (Ctrl+V) directly into your email body in Outlook.</p>
         
         <div id="emailContent">
             <!-- Dynamic Content Injected Here -->
         </div>
 
         <div class="btn-container">
-            <button type="button" class="btn-primary" onclick="copyToClipboard()">📋 Copy Email Format</button>
+            <button type="button" class="btn-primary" onclick="copyToClipboard()">📋 Copy Email Body Format</button>
         </div>
     </div>
 </div>
@@ -554,7 +584,6 @@
 
         let target = parseFloat(tr.dataset.target);
         
-        // Dynamic target evaluation
         if (tr.id === 'row_aht') {
             target = parseFloat(document.getElementById('target_aht').value);
         } else if (tr.id === 'row_shrinkage') {
@@ -627,10 +656,14 @@
         const fullName = document.getElementById('agentName').value.trim() || 'Agent';
         const firstName = fullName.split(' ')[0];
         const lob = document.getElementById('lob').value || 'N/A';
-        const month = document.getElementById('monthSelect').value;
-        const year = document.getElementById('yearInput').value;
+        const month = document.getElementById('monthSelect').value || 'Month';
+        const year = document.getElementById('yearInput').value || 'Year';
         const date = document.getElementById('oneOnOneDate').value;
         const voaText = document.getElementById('voa').value || 'N/A';
+
+        // Set standardized Subject Line
+        const subjectString = `1-on-1 Performance Summary | ${fullName} - ${lob} - ${month} ${year}`;
+        document.getElementById('subjectText').innerText = subjectString;
 
         // Discussion Questions Table HTML for Email
         let discRowsHTML = '';
@@ -657,7 +690,7 @@
             discRowsHTML = `<tr><td colspan="3" style="padding: 10px; border: 1px solid #777777;">No discussion questions selected.</td></tr>`;
         }
 
-        // KPI Table HTML for Email (With bold dark borders and Outlook line-height fixes)
+        // KPI Table HTML for Email
         let kpiRowsHTML = '';
         document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
             const name = tr.cells[0].innerText;
@@ -697,7 +730,7 @@
                 
                 <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
                     <tr><td style="padding: 4px 0; font-size: 15px;"><strong>Agent Name:</strong> ${fullName}</td><td style="padding: 4px 0; font-size: 15px;"><strong>LOB:</strong> ${lob}</td></tr>
-                    <tr><td style="padding: 4px 0; font-size: 15px;"><strong>Period:</strong> ${month} ${year}</td><td style="padding: 4px 0; font-size: 15px;"><strong>Date:</strong> ${date}</td></tr>
+                    <tr><td style="padding: 4px 0; font-size: 15px;"><strong>Month:</strong> ${month} ${year}</td><td style="padding: 4px 0; font-size: 15px;"><strong>Date:</strong> ${date}</td></tr>
                 </table>
 
                 <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">1-on-1 Discussion Topics & Ratings</h3>
@@ -749,6 +782,15 @@
         document.getElementById('emailContent').innerHTML = emailHTML;
         document.getElementById('emailPreview').style.display = 'block';
         document.getElementById('emailPreview').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copySubjectLine() {
+        const subjectText = document.getElementById('subjectText').innerText;
+        navigator.clipboard.writeText(subjectText).then(() => {
+            alert('Subject line copied to clipboard!');
+        }).catch(() => {
+            alert('Failed to copy subject line automatically.');
+        });
     }
 
     function copyToClipboard() {
