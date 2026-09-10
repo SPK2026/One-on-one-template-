@@ -87,9 +87,15 @@
             margin-bottom: 20px;
         }
 
-        .discussion-table th, .discussion-table td,
-        .kpi-table th, .kpi-table td {
+        .discussion-table th, .discussion-table td {
             border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        /* Bold dark borders for KPI Table in web view */
+        .kpi-table th, .kpi-table td {
+            border: 2px solid #111111;
             padding: 10px;
             text-align: left;
         }
@@ -231,7 +237,7 @@
             </div>
         </div>
 
-        <!-- Discussion & VOA Section (Above KPI Table) -->
+        <!-- Discussion & VOA Section -->
         <div class="section-title">Discussion Topics & Voice of Agent (VOA)</div>
         <table class="discussion-table">
             <thead>
@@ -360,14 +366,14 @@
                 <!-- KPI Field: Loss per 1k transactions -->
                 <tr id="row_loss" data-kpi="Loss per 1k Transactions" data-type="num" data-dir="less">
                     <td>Loss per 1k Transactions</td>
-                    <td><input type="number" id="target_loss" step="any" oninput="calculateLossPer1k()" placeholder="Enter Target"></td>
+                    <td><input type="text" id="target_loss" onblur="formatTargetField(this, 'num')" oninput="calculateLossPer1k()" placeholder="Enter Target"></td>
                     <td><input type="text" id="kpi_loss" class="kpi-input" readonly placeholder="Auto-calculated"></td>
                     <td id="status_loss" class="status-cell">-</td>
                 </tr>
-                <!-- AHT with manual target field -->
+                <!-- AHT with manual target field (formatted with secs) -->
                 <tr id="row_aht" data-kpi="AHT" data-type="num" data-dir="less">
                     <td>AHT (seconds)</td>
-                    <td><input type="number" id="target_aht" oninput="processKPI(document.getElementById('kpi_aht'))" placeholder="Enter Secs"></td>
+                    <td><input type="text" id="target_aht" onblur="formatTargetField(this, 'secs')" oninput="processKPI(document.getElementById('kpi_aht'))" placeholder="Enter Secs"></td>
                     <td><input type="text" id="kpi_aht" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 980"></td>
                     <td id="status_aht" class="status-cell">-</td>
                 </tr>
@@ -383,17 +389,17 @@
                     <td><input type="text" id="kpi_support" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 4.1"></td>
                     <td id="status_support" class="status-cell">-</td>
                 </tr>
-                <!-- Productivity with manual target field -->
+                <!-- Productivity with manual target field (formatted with %) -->
                 <tr id="row_productivity" data-kpi="Productivity" data-type="pct" data-dir="more">
                     <td>Productivity (%)</td>
-                    <td><input type="number" id="target_productivity" step="any" oninput="processKPI(document.getElementById('kpi_productivity'))" placeholder="Enter Target %"></td>
+                    <td><input type="text" id="target_productivity" onblur="formatTargetField(this, 'pct')" oninput="processKPI(document.getElementById('kpi_productivity'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_productivity" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 94"></td>
                     <td id="status_productivity" class="status-cell">-</td>
                 </tr>
-                <!-- In-Office Shrinkage with manual target field -->
+                <!-- In-Office Shrinkage with manual target field (formatted with %) -->
                 <tr id="row_shrinkage" data-kpi="In-Office Shrinkage" data-type="pct" data-dir="less">
                     <td>In-Office Shrinkage (%)</td>
-                    <td><input type="number" id="target_shrinkage" step="any" oninput="processKPI(document.getElementById('kpi_shrinkage'))" placeholder="Enter Target %"></td>
+                    <td><input type="text" id="target_shrinkage" onblur="formatTargetField(this, 'pct')" oninput="processKPI(document.getElementById('kpi_shrinkage'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_shrinkage" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 10"></td>
                     <td id="status_shrinkage" class="status-cell">-</td>
                 </tr>
@@ -478,6 +484,23 @@
         document.getElementById('monthSelect').value = currentMonth;
         document.getElementById('yearInput').value = dateObj.getFullYear();
     };
+
+    function formatTargetField(input, type) {
+        if (!input) return;
+        let val = input.value.trim();
+        if (!val) return;
+
+        let numVal = parseFloat(val.replace(/[^\d.]/g, ''));
+        if (isNaN(numVal)) return;
+
+        if (type === 'secs') {
+            input.value = numVal + ' secs';
+        } else if (type === 'pct') {
+            input.value = numVal + '%';
+        } else {
+            input.value = numVal;
+        }
+    }
 
     function calculateLossPer1k() {
         const txns = parseFloat(document.getElementById('total_transactions').value);
@@ -592,11 +615,11 @@
     }
 
     function formatBulletList(rawText) {
-        if (!rawText.trim()) return '<li>None</li>';
+        if (!rawText.trim()) return '<li style="margin-bottom: 6px;">None</li>';
         const lines = rawText.split('\n').filter(line => line.trim() !== '');
         return lines.map(line => {
             let cleanLine = line.replace(/^[•\-\*]\s*/, '');
-            return `<li>${cleanLine}</li>`;
+            return `<li style="margin-bottom: 6px;">${cleanLine}</li>`;
         }).join('');
     }
 
@@ -622,19 +645,19 @@
             if (qSelect.value) {
                 discRowsHTML += `
                     <tr>
-                        <td style="padding: 8px; border: 1px solid #ddd;"><strong>${cat}</strong></td>
-                        <td style="padding: 8px; border: 1px solid #ddd;">${qVal}</td>
-                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;"><strong>${rVal}</strong></td>
+                        <td style="padding: 10px; border: 1px solid #777777;"><strong>${cat}</strong></td>
+                        <td style="padding: 10px; border: 1px solid #777777;">${qVal}</td>
+                        <td style="padding: 10px; border: 1px solid #777777; text-align: center;"><strong>${rVal}</strong></td>
                     </tr>
                 `;
             }
         });
 
         if (!discRowsHTML) {
-            discRowsHTML = `<tr><td colspan="3" style="padding: 8px; border: 1px solid #ddd;">No discussion questions selected.</td></tr>`;
+            discRowsHTML = `<tr><td colspan="3" style="padding: 10px; border: 1px solid #777777;">No discussion questions selected.</td></tr>`;
         }
 
-        // KPI Table HTML for Email
+        // KPI Table HTML for Email (With bold dark borders and Outlook line-height fixes)
         let kpiRowsHTML = '';
         document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
             const name = tr.cells[0].innerText;
@@ -642,13 +665,7 @@
             let target = tr.cells[1].innerText;
             const targetInput = tr.cells[1].querySelector('input');
             if (targetInput) {
-                if (tr.id === 'row_aht') {
-                    target = targetInput.value ? targetInput.value + ' secs' : '-';
-                } else if (tr.id === 'row_shrinkage' || tr.id === 'row_loss' || tr.id === 'row_productivity') {
-                    target = targetInput.value ? targetInput.value + '%' : '-';
-                } else {
-                    target = targetInput.value ? targetInput.value : '-';
-                }
+                target = targetInput.value ? targetInput.value : '-';
             }
 
             const actualInput = tr.cells[2].querySelector('input');
@@ -657,39 +674,39 @@
             const statusCell = tr.cells[3];
             const statusText = statusCell ? statusCell.textContent : '-';
 
-            let colorStyle = '#333';
+            let colorStyle = '#333333';
             if (statusText === 'MET') colorStyle = '#27ae60';
             if (statusText === 'NOT MET') colorStyle = '#c0392b';
 
             kpiRowsHTML += `
                 <tr>
-                    <td style="padding: 8px; border: 1px solid #ddd;">${name}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd;">${target}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: ${colorStyle};">${inputVal}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: ${colorStyle};">${statusText}</td>
+                    <td style="padding: 10px; border: 2px solid #111111;">${name}</td>
+                    <td style="padding: 10px; border: 2px solid #111111;">${target}</td>
+                    <td style="padding: 10px; border: 2px solid #111111; font-weight: bold; color: ${colorStyle};">${inputVal}</td>
+                    <td style="padding: 10px; border: 2px solid #111111; font-weight: bold; color: ${colorStyle};">${statusText}</td>
                 </tr>
             `;
         });
 
         const emailHTML = `
-            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333; max-width: 650px;">
-                <p style="font-size: 16px; margin-bottom: 15px;">Hi <strong>${firstName}</strong>,</p>
-                <p>Please find below the performance summary from our 1-on-1 discussion for <strong>${month} ${year}</strong>.</p>
+            <div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #333333; max-width: 650px;">
+                <p style="margin: 0 0 16px 0; font-size: 16px;">Hi <strong>${firstName}</strong>,</p>
+                <p style="margin: 0 0 16px 0;">Please find below the performance summary from our 1-on-1 discussion for <strong>${month} ${year}</strong>.</p>
                 
-                <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-top: 20px;">Monthly 1-on-1 Summary</h3>
+                <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin: 24px 0 12px 0;">Monthly 1-on-1 Summary</h3>
                 
                 <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
-                    <tr><td style="padding: 4px 0;"><strong>Agent Name:</strong> ${fullName}</td><td style="padding: 4px 0;"><strong>LOB:</strong> ${lob}</td></tr>
-                    <tr><td style="padding: 4px 0;"><strong>Period:</strong> ${month} ${year}</td><td style="padding: 4px 0;"><strong>Date:</strong> ${date}</td></tr>
+                    <tr><td style="padding: 4px 0; font-size: 15px;"><strong>Agent Name:</strong> ${fullName}</td><td style="padding: 4px 0; font-size: 15px;"><strong>LOB:</strong> ${lob}</td></tr>
+                    <tr><td style="padding: 4px 0; font-size: 15px;"><strong>Period:</strong> ${month} ${year}</td><td style="padding: 4px 0; font-size: 15px;"><strong>Date:</strong> ${date}</td></tr>
                 </table>
 
-                <h3 style="color: #2c3e50; margin-top: 15px;">1-on-1 Discussion Topics & Ratings</h3>
-                <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border-color: #ddd; margin-bottom: 15px;">
+                <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">1-on-1 Discussion Topics & Ratings</h3>
+                <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border: 1px solid #777777; margin-bottom: 20px;">
                     <thead style="background-color: #f2f2f2;">
                         <tr>
-                            <th style="width: 25%;">Category</th>
-                            <th style="width: 60%;">Discussion Question</th>
-                            <th style="width: 15%;">Rating</th>
+                            <th style="width: 25%; padding: 10px; border: 1px solid #777777;">Category</th>
+                            <th style="width: 60%; padding: 10px; border: 1px solid #777777;">Discussion Question</th>
+                            <th style="width: 15%; padding: 10px; border: 1px solid #777777;">Rating</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -697,19 +714,19 @@
                     </tbody>
                 </table>
 
-                <h3 style="color: #2c3e50; margin-top: 15px;">Voice of Agent (VOA)</h3>
-                <ul style="padding-left: 20px;">
+                <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">Voice of Agent (VOA)</h3>
+                <ul style="padding-left: 20px; margin: 0 0 20px 0;">
                     ${formatBulletList(voaText)}
                 </ul>
 
-                <h3 style="color: #2c3e50; margin-top: 15px;">KPI Performance Summary</h3>
-                <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border-color: #ddd;">
-                    <thead style="background-color: #f2f2f2;">
+                <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">KPI Performance Summary</h3>
+                <table border="2" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border: 2px solid #111111; margin-bottom: 20px;">
+                    <thead style="background-color: #e2e8f0;">
                         <tr>
-                            <th>Metric</th>
-                            <th>Target</th>
-                            <th>Actual Score</th>
-                            <th>Status</th>
+                            <th style="padding: 10px; border: 2px solid #111111; color: #111111;">Metric</th>
+                            <th style="padding: 10px; border: 2px solid #111111; color: #111111;">Target</th>
+                            <th style="padding: 10px; border: 2px solid #111111; color: #111111;">Actual Score</th>
+                            <th style="padding: 10px; border: 2px solid #111111; color: #111111;">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -717,13 +734,13 @@
                     </tbody>
                 </table>
 
-                <h3 style="color: #2c3e50; margin-top: 15px;">Observations</h3>
-                <ul style="padding-left: 20px;">
+                <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">Observations</h3>
+                <ul style="padding-left: 20px; margin: 0 0 20px 0;">
                     ${formatBulletList(document.getElementById('observations').value)}
                 </ul>
 
-                <h3 style="color: #2c3e50; margin-top: 15px;">Feedback & Appreciation</h3>
-                <ul style="padding-left: 20px;">
+                <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">Feedback & Appreciation</h3>
+                <ul style="padding-left: 20px; margin: 0 0 20px 0;">
                     ${formatBulletList(document.getElementById('feedback').value)}
                 </ul>
             </div>
