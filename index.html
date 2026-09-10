@@ -85,33 +85,47 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            table-layout: auto;
         }
 
         .discussion-table th, .discussion-table td {
             border: 1px solid var(--border-color);
             padding: 10px;
             text-align: left;
+            vertical-align: middle;
         }
 
-        /* Bold dark borders for KPI Table in web view */
+        /* Bold dark borders & Fit-to-Text Alignment for KPI Table */
         .kpi-table th, .kpi-table td {
             border: 2px solid #111111;
-            padding: 10px;
-            text-align: left;
+            padding: 8px 12px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .kpi-table td:first-child, .kpi-table th:first-child {
+            text-align: left; /* Keep Metric names left-aligned for readability */
         }
 
         .discussion-table th, .kpi-table th {
             background-color: #f1f4f8;
             color: var(--primary-color);
+            font-weight: bold;
         }
 
-        .kpi-input {
+        .kpi-input, .kpi-table input[type="text"], .kpi-table input[type="number"] {
             width: 90%;
+            max-width: 140px;
+            text-align: center;
             font-weight: bold;
+            box-sizing: border-box;
+            padding: 6px;
         }
 
         .status-cell {
             font-weight: bold;
+            text-align: center;
         }
 
         .met-text {
@@ -175,7 +189,6 @@
             align-self: flex-start;
         }
 
-        /* Subject line box styling */
         .subject-box {
             background: #eef7fc;
             border: 1px solid var(--accent-color);
@@ -362,7 +375,7 @@
         <table class="kpi-table">
             <thead>
                 <tr>
-                    <th>Metric</th>
+                    <th style="text-align: left;">Metric</th>
                     <th>Target</th>
                     <th>Actual Score</th>
                     <th>Status</th>
@@ -371,85 +384,85 @@
             <tbody>
                 <!-- Non-KPI Field: Total Transactions -->
                 <tr>
-                    <td>Total Transactions</td>
+                    <td style="text-align: left;">Total Transactions</td>
                     <td>-</td>
                     <td><input type="number" id="total_transactions" oninput="calculateLossPer1k()" placeholder="e.g. 500"></td>
                     <td>-</td>
                 </tr>
                 <!-- Non-KPI Field: Total TG & RLs -->
                 <tr>
-                    <td>Total TG & RLs</td>
+                    <td style="text-align: left;">Total TG & RLs</td>
                     <td>-</td>
                     <td><input type="number" id="total_tg_rl" oninput="calculateLossPer1k()" placeholder="e.g. 10"></td>
                     <td>-</td>
                 </tr>
                 <!-- KPI Field: Loss per 1k transactions -->
                 <tr id="row_loss" data-kpi="Loss per 1k Transactions" data-type="num" data-dir="less">
-                    <td>Loss per 1k Transactions</td>
+                    <td style="text-align: left;">Loss per 1k Transactions</td>
                     <td><input type="text" id="target_loss" onblur="formatTargetField(this, 'num')" oninput="calculateLossPer1k()" placeholder="Enter Target"></td>
                     <td><input type="text" id="kpi_loss" class="kpi-input" readonly placeholder="Auto-calculated"></td>
                     <td id="status_loss" class="status-cell">-</td>
                 </tr>
                 <!-- AHT with manual target field -->
                 <tr id="row_aht" data-kpi="AHT" data-type="num" data-dir="less">
-                    <td>AHT (seconds)</td>
+                    <td style="text-align: left;">AHT (seconds)</td>
                     <td><input type="text" id="target_aht" onblur="formatTargetField(this, 'secs')" oninput="processKPI(document.getElementById('kpi_aht'))" placeholder="Enter Secs"></td>
                     <td><input type="text" id="kpi_aht" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 980"></td>
                     <td id="status_aht" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="Transfers" data-type="pct" data-target="4" data-dir="less">
-                    <td>Transfers (%)</td>
+                    <td style="text-align: left;">Transfers (%)</td>
                     <td>&lt; 4%</td>
                     <td><input type="text" id="kpi_transfers" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 3.2"></td>
                     <td id="status_transfers" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="Support Placement" data-type="pct" data-target="5" data-dir="less">
-                    <td>Support Placement (%)</td>
+                    <td style="text-align: left;">Support Placement (%)</td>
                     <td>&lt; 5%</td>
                     <td><input type="text" id="kpi_support" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 4.1"></td>
                     <td id="status_support" class="status-cell">-</td>
                 </tr>
                 <!-- Productivity with manual target field -->
                 <tr id="row_productivity" data-kpi="Productivity" data-type="pct" data-dir="more">
-                    <td>Productivity (%)</td>
+                    <td style="text-align: left;">Productivity (%)</td>
                     <td><input type="text" id="target_productivity" onblur="formatTargetField(this, 'pct')" oninput="processKPI(document.getElementById('kpi_productivity'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_productivity" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 94"></td>
                     <td id="status_productivity" class="status-cell">-</td>
                 </tr>
                 <!-- In-Office Shrinkage with manual target field -->
                 <tr id="row_shrinkage" data-kpi="In-Office Shrinkage" data-type="pct" data-dir="less">
-                    <td>In-Office Shrinkage (%)</td>
+                    <td style="text-align: left;">In-Office Shrinkage (%)</td>
                     <td><input type="text" id="target_shrinkage" onblur="formatTargetField(this, 'pct')" oninput="processKPI(document.getElementById('kpi_shrinkage'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_shrinkage" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 10"></td>
                     <td id="status_shrinkage" class="status-cell">-</td>
                 </tr>
                 <!-- Absence target set to 12.50% -->
                 <tr data-kpi="Absence" data-type="pct" data-target="12.50" data-dir="less">
-                    <td>Absence (%)</td>
+                    <td style="text-align: left;">Absence (%)</td>
                     <td>&lt; 12.50%</td>
                     <td><input type="text" id="kpi_absence" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 2"></td>
                     <td id="status_absence" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="CSAT Overall" data-type="pct" data-target="68" data-dir="more">
-                    <td>CSAT Score - Overall (%)</td>
+                    <td style="text-align: left;">CSAT Score - Overall (%)</td>
                     <td>68%</td>
                     <td><input type="text" id="kpi_csat_overall" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 72"></td>
                     <td id="status_csat_overall" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="CSAT Booking" data-type="pct" data-target="70" data-dir="more">
-                    <td>CSAT Score - Booking (%)</td>
+                    <td style="text-align: left;">CSAT Score - Booking (%)</td>
                     <td>70%</td>
                     <td><input type="text" id="kpi_csat_booking" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 75"></td>
                     <td id="status_csat_booking" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="CSAT English" data-type="pct" data-target="65" data-dir="more">
-                    <td>CSAT Score - English (%)</td>
+                    <td style="text-align: left;">CSAT Score - English (%)</td>
                     <td>65%</td>
                     <td><input type="text" id="kpi_csat_english" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 68"></td>
                     <td id="status_csat_english" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="Quality Scores" data-type="pct" data-target="92.5" data-dir="more">
-                    <td>Quality Scores (%)</td>
+                    <td style="text-align: left;">Quality Scores (%)</td>
                     <td>92.5%</td>
                     <td><input type="text" id="kpi_quality" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 95"></td>
                     <td id="status_quality" class="status-cell">-</td>
@@ -678,19 +691,19 @@
             if (qSelect.value) {
                 discRowsHTML += `
                     <tr>
-                        <td style="padding: 10px; border: 1px solid #777777;"><strong>${cat}</strong></td>
-                        <td style="padding: 10px; border: 1px solid #777777;">${qVal}</td>
-                        <td style="padding: 10px; border: 1px solid #777777; text-align: center;"><strong>${rVal}</strong></td>
+                        <td style="padding: 8px 10px; border: 1px solid #777777; vertical-align: middle;"><strong>${cat}</strong></td>
+                        <td style="padding: 8px 10px; border: 1px solid #777777; vertical-align: middle;">${qVal}</td>
+                        <td style="padding: 8px 10px; border: 1px solid #777777; text-align: center; vertical-align: middle;"><strong>${rVal}</strong></td>
                     </tr>
                 `;
             }
         });
 
         if (!discRowsHTML) {
-            discRowsHTML = `<tr><td colspan="3" style="padding: 10px; border: 1px solid #777777;">No discussion questions selected.</td></tr>`;
+            discRowsHTML = `<tr><td colspan="3" style="padding: 10px; border: 1px solid #777777; text-align: center; vertical-align: middle;">No discussion questions selected.</td></tr>`;
         }
 
-        // KPI Table HTML for Email
+        // KPI Table HTML for Email (Centered horizontally and vertically with dark fit-to-text borders)
         let kpiRowsHTML = '';
         document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
             const name = tr.cells[0].innerText;
@@ -713,10 +726,10 @@
 
             kpiRowsHTML += `
                 <tr>
-                    <td style="padding: 10px; border: 2px solid #111111;">${name}</td>
-                    <td style="padding: 10px; border: 2px solid #111111;">${target}</td>
-                    <td style="padding: 10px; border: 2px solid #111111; font-weight: bold; color: ${colorStyle};">${inputVal}</td>
-                    <td style="padding: 10px; border: 2px solid #111111; font-weight: bold; color: ${colorStyle};">${statusText}</td>
+                    <td style="padding: 8px 12px; border: 2px solid #111111; text-align: left; vertical-align: middle; white-space: nowrap;">${name}</td>
+                    <td style="padding: 8px 12px; border: 2px solid #111111; text-align: center; vertical-align: middle; white-space: nowrap;" align="center" valign="middle">${target}</td>
+                    <td style="padding: 8px 12px; border: 2px solid #111111; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap;" align="center" valign="middle">${inputVal}</td>
+                    <td style="padding: 8px 12px; border: 2px solid #111111; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap;" align="center" valign="middle">${statusText}</td>
                 </tr>
             `;
         });
@@ -737,9 +750,9 @@
                 <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border: 1px solid #777777; margin-bottom: 20px;">
                     <thead style="background-color: #f2f2f2;">
                         <tr>
-                            <th style="width: 25%; padding: 10px; border: 1px solid #777777;">Category</th>
-                            <th style="width: 60%; padding: 10px; border: 1px solid #777777;">Discussion Question</th>
-                            <th style="width: 15%; padding: 10px; border: 1px solid #777777;">Rating</th>
+                            <th style="width: 25%; padding: 8px 10px; border: 1px solid #777777; vertical-align: middle;">Category</th>
+                            <th style="width: 60%; padding: 8px 10px; border: 1px solid #777777; vertical-align: middle;">Discussion Question</th>
+                            <th style="width: 15%; padding: 8px 10px; border: 1px solid #777777; text-align: center; vertical-align: middle;">Rating</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -753,13 +766,13 @@
                 </ul>
 
                 <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">KPI Performance Summary</h3>
-                <table border="2" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border: 2px solid #111111; margin-bottom: 20px;">
+                <table border="2" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: auto; min-width: 100%; border: 2px solid #111111; margin-bottom: 20px;">
                     <thead style="background-color: #e2e8f0;">
                         <tr>
-                            <th style="padding: 10px; border: 2px solid #111111; color: #111111;">Metric</th>
-                            <th style="padding: 10px; border: 2px solid #111111; color: #111111;">Target</th>
-                            <th style="padding: 10px; border: 2px solid #111111; color: #111111;">Actual Score</th>
-                            <th style="padding: 10px; border: 2px solid #111111; color: #111111;">Status</th>
+                            <th style="padding: 8px 12px; border: 2px solid #111111; color: #111111; text-align: left; vertical-align: middle; white-space: nowrap;">Metric</th>
+                            <th style="padding: 8px 12px; border: 2px solid #111111; color: #111111; text-align: center; vertical-align: middle; white-space: nowrap;" align="center" valign="middle">Target</th>
+                            <th style="padding: 8px 12px; border: 2px solid #111111; color: #111111; text-align: center; vertical-align: middle; white-space: nowrap;" align="center" valign="middle">Actual Score</th>
+                            <th style="padding: 8px 12px; border: 2px solid #111111; color: #111111; text-align: center; vertical-align: middle; white-space: nowrap;" align="center" valign="middle">Status</th>
                         </tr>
                     </thead>
                     <tbody>
