@@ -383,9 +383,10 @@
                     <td><input type="text" id="kpi_support" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 4.1"></td>
                     <td id="status_support" class="status-cell">-</td>
                 </tr>
-                <tr data-kpi="Productivity" data-type="pct" data-target="90" data-dir="more">
+                <!-- Productivity with manual target field -->
+                <tr id="row_productivity" data-kpi="Productivity" data-type="pct" data-dir="more">
                     <td>Productivity (%)</td>
-                    <td>&gt; 90%</td>
+                    <td><input type="number" id="target_productivity" step="any" oninput="processKPI(document.getElementById('kpi_productivity'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_productivity" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 94"></td>
                     <td id="status_productivity" class="status-cell">-</td>
                 </tr>
@@ -396,7 +397,7 @@
                     <td><input type="text" id="kpi_shrinkage" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 10"></td>
                     <td id="status_shrinkage" class="status-cell">-</td>
                 </tr>
-                <!-- Absence updated target to 12.50% -->
+                <!-- Absence target set to 12.50% -->
                 <tr data-kpi="Absence" data-type="pct" data-target="12.50" data-dir="less">
                     <td>Absence (%)</td>
                     <td>&lt; 12.50%</td>
@@ -434,8 +435,8 @@
         <div class="section-title">Qualitative Observations & Feedback</div>
 
         <div class="form-group">
-            <label for="observations">Observations (Auto-generated KPI Status + Supervisor Notes below)</label>
-            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="KPI observation summary will automatically appear here..."></textarea>
+            <label for="observations">Observations</label>
+            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="Enter observations..."></textarea>
             <button type="button" class="btn-fix" onclick="correctText('observations')">✨ Fix Grammar & Spelling</button>
         </div>
 
@@ -516,8 +517,6 @@
             lossInput.classList.remove('met-text', 'not-met-text');
             statusCell.classList.remove('met-text', 'not-met-text');
         }
-
-        updateAutoObservations();
     }
 
     function processKPI(input) {
@@ -532,11 +531,13 @@
 
         let target = parseFloat(tr.dataset.target);
         
-        // Handle dynamic inputs for AHT and In-Office Shrinkage targets
+        // Dynamic target evaluation
         if (tr.id === 'row_aht') {
             target = parseFloat(document.getElementById('target_aht').value);
         } else if (tr.id === 'row_shrinkage') {
             target = parseFloat(document.getElementById('target_shrinkage').value);
+        } else if (tr.id === 'row_productivity') {
+            target = parseFloat(document.getElementById('target_productivity').value);
         }
 
         let numVal = parseFloat(val.replace(/[^\d.]/g, ''));
@@ -569,41 +570,6 @@
             statusCell.classList.add('not-met-text');
             statusCell.textContent = 'NOT MET';
         }
-
-        updateAutoObservations();
-    }
-
-    function updateAutoObservations() {
-        const obsField = document.getElementById('observations');
-        let currentText = obsField.value;
-        
-        let supervisorNotes = "";
-        if (currentText.includes("--- Supervisor Additional Notes ---")) {
-            supervisorNotes = currentText.split("--- Supervisor Additional Notes ---")[1];
-        }
-
-        let autoBullets = [];
-        const rows = document.querySelectorAll('.kpi-table tbody tr');
-
-        rows.forEach(tr => {
-            const kpiName = tr.dataset.kpi;
-            if (!kpiName) return;
-
-            const input = tr.querySelector('.kpi-input');
-            const statusCell = tr.querySelector('.status-cell');
-            
-            if (input && input.value.trim() !== '' && statusCell.textContent !== '-') {
-                autoBullets.push(`• ${kpiName}: ${input.value.trim()} - ${statusCell.textContent}`);
-            }
-        });
-
-        let newText = autoBullets.join('\n');
-        newText += '\n\n--- Supervisor Additional Notes ---\n';
-        if (supervisorNotes) {
-            newText += supervisorNotes.trim();
-        }
-
-        obsField.value = newText;
     }
 
     function correctText(elementId) {
@@ -630,7 +596,6 @@
         const lines = rawText.split('\n').filter(line => line.trim() !== '');
         return lines.map(line => {
             let cleanLine = line.replace(/^[•\-\*]\s*/, '');
-            if(cleanLine.startsWith("---")) return `<br><strong>${cleanLine}</strong>`;
             return `<li>${cleanLine}</li>`;
         }).join('');
     }
@@ -679,7 +644,7 @@
             if (targetInput) {
                 if (tr.id === 'row_aht') {
                     target = targetInput.value ? targetInput.value + ' secs' : '-';
-                } else if (tr.id === 'row_shrinkage' || tr.id === 'row_loss') {
+                } else if (tr.id === 'row_shrinkage' || tr.id === 'row_loss' || tr.id === 'row_productivity') {
                     target = targetInput.value ? targetInput.value + '%' : '-';
                 } else {
                     target = targetInput.value ? targetInput.value : '-';
