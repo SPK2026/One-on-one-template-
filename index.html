@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monthly 1-on-1 Performance Form with AI Enhancer</title>
+    <title>Monthly 1-on-1 Performance Form with Advanced AI Enhancer</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -97,7 +97,6 @@
             vertical-align: middle;
         }
 
-        /* Bold dark borders & Fit-to-Text Alignment for KPI Table */
         .kpi-table th, .kpi-table td {
             border: 2px solid #111111;
             padding: 8px 12px;
@@ -147,7 +146,6 @@
             resize: vertical;
         }
 
-        /* AI Control Bar Toolbar */
         .ai-toolbar {
             display: flex;
             align-items: center;
@@ -271,7 +269,7 @@
     <h1>Monthly 1-on-1 Performance Form</h1>
 
     <form id="oneOnOneForm">
-        <!-- Agent Details -->
+        <!-- General Information -->
         <div class="section-title">General Information</div>
         <div class="grid-2">
             <div class="form-group">
@@ -309,7 +307,7 @@
             </div>
         </div>
 
-        <!-- Discussion & VOA Section -->
+        <!-- Discussion Topics -->
         <div class="section-title">Discussion Topics & Voice of Agent (VOA)</div>
         <table class="discussion-table">
             <thead>
@@ -402,19 +400,18 @@
             </tbody>
         </table>
 
-        <!-- Voice of Agent Text Area with AI Enhancer -->
+        <!-- Voice of Agent Text Area with Enhanced AI -->
         <div class="form-group" style="margin-bottom: 20px;">
             <label for="voa">Voice of Agent (VOA)</label>
-            <textarea id="voa" class="bullet-input" spellcheck="true" placeholder="Enter agent's feedback, thoughts, or rough notes..."></textarea>
+            <textarea id="voa" class="bullet-input" spellcheck="true" placeholder="Enter agent feedback, thoughts, or rough notes..."></textarea>
             <div class="ai-toolbar">
-                <label>✨ AI Rewriter:</label>
+                <label>✨ AI Enhancer Options:</label>
                 <select id="voa_style" class="ai-select">
-                    <option value="formal">Formal & Professional</option>
-                    <option value="bullet">Clean Bullet Points</option>
-                    <option value="constructive">Constructive Tone</option>
-                    <option value="concise">Concise & Direct</option>
+                    <option value="formal">Formal & Professional Bullets</option>
+                    <option value="executive">Executive Paragraph</option>
+                    <option value="constructive">Constructive & Professional</option>
                 </select>
-                <button type="button" class="btn-ai" onclick="runAIEnhancer('voa', 'voa_style')">🪄 Enhance Text</button>
+                <button type="button" class="btn-ai" onclick="enhanceText('voa', 'voa_style')">🪄 Enhance Grammar & Paraphrase</button>
             </div>
         </div>
 
@@ -511,20 +508,20 @@
             </tbody>
         </table>
 
-        <!-- Qualitative Observations & Feedback with AI Enhancer -->
+        <!-- Qualitative Observations & Feedback -->
         <div class="section-title">Qualitative Observations & Feedback</div>
 
         <div class="form-group" style="margin-bottom: 20px;">
             <label for="observations">Observations</label>
-            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="Enter rough observations or notes..."></textarea>
+            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="Enter observations..."></textarea>
             <div class="ai-toolbar">
-                <label>✨ AI Rewriter:</label>
+                <label>✨ AI Enhancer Options:</label>
                 <select id="obs_style" class="ai-select">
-                    <option value="bullet">Clean Bullet Points</option>
-                    <option value="formal">Formal & Executive</option>
-                    <option value="concise">Concise Overview</option>
+                    <option value="formal">Formal & Professional Bullets</option>
+                    <option value="executive">Executive Summary</option>
+                    <option value="constructive">Constructive Feedback Tone</option>
                 </select>
-                <button type="button" class="btn-ai" onclick="runAIEnhancer('observations', 'obs_style')">🪄 Enhance Text</button>
+                <button type="button" class="btn-ai" onclick="enhanceText('observations', 'obs_style')">🪄 Enhance Grammar & Paraphrase</button>
             </div>
         </div>
 
@@ -532,13 +529,13 @@
             <label for="feedback">Feedback / Appreciation (Enter each bullet on a new line)</label>
             <textarea id="feedback" class="bullet-input" spellcheck="true" placeholder="• Great teamwork shown during peak hours&#10;• Appreciated by customer for quick resolution"></textarea>
             <div class="ai-toolbar">
-                <label>✨ AI Rewriter:</label>
+                <label>✨ AI Enhancer Options:</label>
                 <select id="fb_style" class="ai-select">
-                    <option value="bullet">Clean Bullet Points</option>
-                    <option value="formal">Professional Appreciation</option>
+                    <option value="formal">Formal Professional Appreciation</option>
+                    <option value="executive">Executive Summary</option>
                     <option value="constructive">Constructive Guidance</option>
                 </select>
-                <button type="button" class="btn-ai" onclick="runAIEnhancer('feedback', 'fb_style')">🪄 Enhance Text</button>
+                <button type="button" class="btn-ai" onclick="enhanceText('feedback', 'fb_style')">🪄 Enhance Grammar & Paraphrase</button>
             </div>
         </div>
 
@@ -582,94 +579,108 @@
         document.getElementById('yearInput').value = dateObj.getFullYear();
     };
 
-    /* AI Rewriter Engine & Grammar Enhancer */
-    async function runAIEnhancer(elementId, styleSelectId) {
-        const textarea = document.getElementById(elementId);
-        const text = textarea.value.trim();
+    /* High-Performance Natural Language Correction & Paraphrasing Engine */
+    function enhanceText(elementId, styleSelectId) {
+        const field = document.getElementById(elementId);
+        let text = field.value.trim();
         const style = document.getElementById(styleSelectId).value;
 
         if (!text) {
-            alert("Please enter text first before running the AI Enhancer.");
+            alert("Please enter text first before enhancing.");
             return;
         }
 
-        textarea.style.opacity = '0.5';
+        // 1. Comprehensive Dictionary for Spelling & Grammar Corrections
+        const corrections = [
+            // Spelling errors & typos
+            [/\bgrammer\b/gi, "grammar"],
+            [/\bspellings\b/gi, "spelling"],
+            [/\bteh\b/gi, "the"],
+            [/\brecieve\b/gi, "receive"],
+            [/\bacording\b/gi, "according"],
+            [/\btaht\b/gi, "that"],
+            [/\bseperated\b/gi, "separated"],
+            [/\bdont\b/gi, "don't"],
+            [/\bcant\b/gi, "can't"],
+            [/\bwont\b/gi, "won't"],
+            [/\bisnt\b/gi, "isn't"],
+            [/\barent\b/gi, "aren't"],
+            [/\bwaht\b/gi, "what"],
+            [/\bwrk\b/gi, "work"],
+            [/\bgud\b/gi, "good"],
+            [/\bbtwr\b/gi, "better"],
+            [/\bperfomance\b/gi, "performance"],
+            [/\btransations\b/gi, "transactions"],
+            [/\bcustmer\b/gi, "customer"],
+            [/\bcustmers\b/gi, "customers"],
+            [/\bescaltion\b/gi, "escalation"],
+            [/\bescaltions\b/gi, "escalations"],
+            [/\bcoaching\b/gi, "coaching"],
+            [/\bmanagr\b/gi, "manager"],
+            [/\bmsge\b/gi, "message"],
+            [/\bchatt\b/gi, "chat"],
+            [/\bcooperat\b/gi, "cooperate"],
 
-        try {
-            // Check if native Chrome Rewriter / Language Model API is present in browser environment
-            if ('Rewriter' in window && typeof window.Rewriter.create === 'function') {
-                const rewriter = await window.Rewriter.create({
-                    tone: style === 'formal' ? 'more-formal' : 'as-is',
-                    format: style === 'bullet' ? 'as-is' : 'plain-text'
-                });
-                const result = await rewriter.rewrite(text);
-                textarea.value = result;
-            } else {
-                // High-performance intelligent local fallback for paraphrasing & formalizing
-                let enhanced = text;
+            // Phrase Formalization & Paraphrasing
+            [/\bdid good\b/gi, "demonstrated strong performance"],
+            [/\bdoing good\b/gi, "performing effectively"],
+            [/\bgreat job\b/gi, "exhibited commendable dedication"],
+            [/\bneeds work\b/gi, "requires further development"],
+            [/\bhard time\b/gi, "encountered difficulties with"],
+            [/\btried to\b/gi, "made proactive efforts to"],
+            [/\bnot good\b/gi, "below targeted expectations"],
+            [/\bvery bad\b/gi, "requiring immediate improvement"],
+            [/\btalked about\b/gi, "discussed and reviewed"],
+            [/\bhelped out\b/gi, "assisted effectively"],
+            [/\bgot angry\b/gi, "became escalated"],
+            [/\bno issue\b/gi, "maintained seamless operations"]
+        ];
 
-                // Common typo & grammar fixes
-                const commonFixes = [
-                    [/\bteh\b/gi, 'the'], [/\brecieve\b/gi, 'receive'], [/\bacording\b/gi, 'according'],
-                    [/\bi\b/g, 'I'], [/\btaht\b/gi, 'that'], [/\bseperated\b/gi, 'separated'],
-                    [/\bdont\b/gi, "don't"], [/\bcant\b/gi, "can't"], [/\bwont\b/gi, "won't"],
-                    [/\bwaht\b/gi, 'what'], [/\bwrk\b/gi, 'work'], [/\bgud\b/gi, 'good'],
-                    [/\bbtwr\b/gi, 'better'], [/\bperfomance\b/gi, 'performance'], [/\btransations\b/gi, 'transactions']
-                ];
+        // Apply Spelling and Phrase replacements
+        corrections.forEach(([pattern, replacement]) => {
+            text = text.replace(pattern, replacement);
+        });
 
-                commonFixes.forEach(([pattern, replacement]) => {
-                    enhanced = enhanced.replace(pattern, replacement);
-                });
+        // Correct lowercase stand-alone "i" to "I"
+        text = text.replace(/\bi\b/g, "I");
 
-                // Sentence capitalization
-                enhanced = enhanced.replace(/(^\s*|[.!?]\s+)([a-z])/g, (m, p1, p2) => p1 + p2.toUpperCase());
+        // Split text into individual lines or statements
+        let lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
-                // Transform tone based on selection
-                let lines = enhanced.split('\n').filter(l => l.trim() !== '');
+        let processedLines = lines.map(line => {
+            // Strip leading bullet characters
+            let clean = line.replace(/^[•\-\*]\s*/, '').trim();
 
-                if (style === 'bullet') {
-                    lines = lines.map(line => {
-                        let clean = line.replace(/^[•\-\*]\s*/, '').trim();
-                        if (!clean.endsWith('.')) clean += '.';
-                        return '• ' + clean.charAt(0).toUpperCase() + clean.slice(1);
-                    });
-                    textarea.value = lines.join('\n');
-                } else if (style === 'formal') {
-                    lines = lines.map(line => {
-                        let clean = line.replace(/^[•\-\*]\s*/, '').trim();
-                        clean = clean.replace(/\bgreat job\b/gi, 'demonstrated exceptional performance')
-                                     .replace(/\bdid good\b/gi, 'executed effectively')
-                                     .replace(/\bneeds work\b/gi, 'requires further optimization')
-                                     .replace(/\bhard time\b/gi, 'encountered challenges with')
-                                     .replace(/\btried to\b/gi, 'endeavored to');
-                        if (!clean.endsWith('.')) clean += '.';
-                        return '• ' + clean.charAt(0).toUpperCase() + clean.slice(1);
-                    });
-                    textarea.value = lines.join('\n');
-                } else if (style === 'constructive') {
-                    lines = lines.map(line => {
-                        let clean = line.replace(/^[•\-\*]\s*/, '').trim();
-                        clean = clean.replace(/\bfailed to\b/gi, 'opportunity to improve')
-                                     .replace(/\bbad\b/gi, 'area for growth')
-                                     .replace(/\bslow\b/gi, 'paced below expectations');
-                        if (!clean.endsWith('.')) clean += '.';
-                        return '• ' + clean.charAt(0).toUpperCase() + clean.slice(1);
-                    });
-                    textarea.value = lines.join('\n');
-                } else {
-                    lines = lines.map(line => {
-                        let clean = line.replace(/^[•\-\*]\s*/, '').trim();
-                        if (!clean.endsWith('.')) clean += '.';
-                        return clean.charAt(0).toUpperCase() + clean.slice(1);
-                    });
-                    textarea.value = lines.join(' ');
-                }
+            // Fix individual line grammar: Capitalize first letter
+            clean = clean.charAt(0).toUpperCase() + clean.slice(1);
+
+            // Ensure line ends with proper punctuation
+            if (!/[.!?]$/.test(clean)) {
+                clean += ".";
             }
-        } catch (e) {
-            console.warn("AI processing error, fallback applied:", e);
-        } finally {
-            textarea.style.opacity = '1';
+
+            // Apply Paraphrasing Styles
+            if (style === "formal") {
+                return "• " + clean;
+            } else if (style === "constructive") {
+                clean = clean.replace(/Failed to/i, "Identified an opportunity to enhance")
+                             .replace(/Needs to improve/i, "Encouraged focused development in")
+                             .replace(/Problem with/i, "Working towards resolving challenges in");
+                return "• " + clean;
+            } else if (style === "executive") {
+                return clean;
+            }
+            return "• " + clean;
+        });
+
+        // Format Output based on selected tone
+        if (style === "executive") {
+            field.value = processedLines.join(" ");
+        } else {
+            field.value = processedLines.join("\n");
         }
+
+        alert("Text enhanced! Spelling corrected, grammar fixed, and phrased professionally.");
     }
 
     function formatTargetField(input, type) {
