@@ -192,7 +192,6 @@
     <h1>Monthly 1-on-1 Performance Form</h1>
 
     <form id="oneOnOneForm">
-        <!-- Agent Details -->
         <div class="section-title">General Information</div>
         <div class="grid-2">
             <div class="form-group">
@@ -226,7 +225,6 @@
             </div>
         </div>
 
-        <!-- KPI Metrics Table -->
         <div class="section-title">KPI Performance Summary</div>
         <table class="kpi-table">
             <thead>
@@ -238,6 +236,24 @@
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <td>Total Transactions</td>
+                    <td>-</td>
+                    <td><input type="number" id="total_transactions" oninput="calculateLossPer1k()" placeholder="e.g. 500"></td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Total TG & RLs</td>
+                    <td>-</td>
+                    <td><input type="number" id="total_tg_rl" oninput="calculateLossPer1k()" placeholder="e.g. 10"></td>
+                    <td>-</td>
+                </tr>
+                <tr id="row_loss" data-kpi="Loss per 1k Transactions" data-type="num" data-dir="less">
+                    <td>Loss per 1k Transactions</td>
+                    <td><input type="number" id="target_loss" step="any" oninput="calculateLossPer1k()" placeholder="Enter Target"></td>
+                    <td><input type="text" id="kpi_loss" class="kpi-input" readonly placeholder="Auto-calculated"></td>
+                    <td id="status_loss" class="status-cell">-</td>
+                </tr>
                 <tr data-kpi="AHT" data-type="num" data-target="1017" data-dir="less">
                     <td>AHT (seconds)</td>
                     <td>1017 secs</td>
@@ -301,7 +317,6 @@
             </tbody>
         </table>
 
-        <!-- Free Text Fields -->
         <div class="section-title">Qualitative Observations & Feedback</div>
 
         <div class="form-group">
@@ -316,21 +331,18 @@
             <button type="button" class="btn-fix" onclick="correctText('feedback')">✨ Fix Grammar & Spelling</button>
         </div>
 
-        <!-- Buttons -->
         <div class="btn-container">
             <button type="button" class="btn-secondary" onclick="clearForm()">Clear Everything</button>
             <button type="button" class="btn-primary" onclick="generateEmailPreview()">Generate Email Summary</button>
         </div>
     </form>
 
-    <!-- Email Output Preview -->
     <div id="emailPreview">
         <h2>Formatted Summary (Ready to Copy)</h2>
         <p>Click the button below, then open your email client and paste (Ctrl+V or Cmd+V) directly into the email body.</p>
         
         <div id="emailContent">
-            <!-- Dynamic Content Injected Here -->
-        </div>
+            </div>
 
         <div class="btn-container">
             <button type="button" class="btn-primary" onclick="copyToClipboard()">📋 Copy Email Format</button>
@@ -349,6 +361,48 @@
         document.getElementById('yearInput').value = dateObj.getFullYear();
     };
 
+    function calculateLossPer1k() {
+        const txns = parseFloat(document.getElementById('total_transactions').value);
+        const tgRl = parseFloat(document.getElementById('total_tg_rl').value);
+        const targetVal = parseFloat(document.getElementById('target_loss').value);
+
+        const lossInput = document.getElementById('kpi_loss');
+        const statusCell = document.getElementById('status_loss');
+
+        if (!isNaN(txns) && txns > 0 && !isNaN(tgRl)) {
+            const lossVal = ((tgRl / txns) * 1000).toFixed(2);
+            lossInput.value = lossVal;
+
+            if (!isNaN(targetVal)) {
+                let isMet = parseFloat(lossVal) <= targetVal;
+                
+                lossInput.classList.remove('met-text', 'not-met-text');
+                statusCell.classList.remove('met-text', 'not-met-text');
+
+                if (isMet) {
+                    lossInput.classList.add('met-text');
+                    statusCell.classList.add('met-text');
+                    statusCell.textContent = 'MET';
+                } else {
+                    lossInput.classList.add('not-met-text');
+                    statusCell.classList.add('not-met-text');
+                    statusCell.textContent = 'NOT MET';
+                }
+            } else {
+                statusCell.textContent = '-';
+                lossInput.classList.remove('met-text', 'not-met-text');
+                statusCell.classList.remove('met-text', 'not-met-text');
+            }
+        } else {
+            lossInput.value = '';
+            statusCell.textContent = '-';
+            lossInput.classList.remove('met-text', 'not-met-text');
+            statusCell.classList.remove('met-text', 'not-met-text');
+        }
+
+        updateAutoObservations();
+    }
+
     function processKPI(input) {
         let val = input.value.trim();
         if (!val) return;
@@ -359,26 +413,17 @@
         const dir = tr.dataset.dir;
         const statusCell = tr.querySelector('.status-cell');
 
-        // Extract raw number
         let numVal = parseFloat(val.replace(/[^\d.]/g, ''));
         if (isNaN(numVal)) return;
 
-        // Auto format actual score text
         if (type === 'pct') {
             input.value = numVal + '%';
         } else {
             input.value = numVal + (type === 'num' && tr.dataset.kpi === 'AHT' ? ' secs' : '');
         }
 
-        // Determine Met / Not Met status
-        let isMet = false;
-        if (dir === 'less') {
-            isMet = numVal <= target;
-        } else {
-            isMet = numVal >= target;
-        }
+        let isMet = (dir === 'less') ? (numVal <= target) : (numVal >= target);
 
-        // Apply Styles to input and status cell
         input.classList.remove('met-text', 'not-met-text');
         statusCell.classList.remove('met-text', 'not-met-text');
 
@@ -399,7 +444,6 @@
         const obsField = document.getElementById('observations');
         let currentText = obsField.value;
         
-        // Preserve supervisor notes if they entered any below a separator line
         let supervisorNotes = "";
         if (currentText.includes("--- Supervisor Additional Notes ---")) {
             supervisorNotes = currentText.split("--- Supervisor Additional Notes ---")[1];
@@ -410,10 +454,12 @@
 
         rows.forEach(tr => {
             const kpiName = tr.dataset.kpi;
+            if (!kpiName) return;
+
             const input = tr.querySelector('.kpi-input');
             const statusCell = tr.querySelector('.status-cell');
             
-            if (input.value.trim() !== '' && statusCell.textContent !== '-') {
+            if (input && input.value.trim() !== '' && statusCell.textContent !== '-') {
                 autoBullets.push(`• ${kpiName}: ${input.value.trim()} - ${statusCell.textContent}`);
             }
         });
@@ -464,14 +510,23 @@
         const year = document.getElementById('yearInput').value;
         const date = document.getElementById('oneOnOneDate').value;
 
-        // Build Table Rows dynamically for email
         let kpiRowsHTML = '';
         document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
             const name = tr.cells[0].innerText;
-            const target = tr.cells[1].innerText;
-            const inputVal = tr.querySelector('.kpi-input').value || 'N/A';
-            const statusCell = tr.querySelector('.status-cell');
-            const statusText = statusCell.textContent;
+            
+            // Check if cell contains target input or direct text
+            let target = tr.cells[1].innerText;
+            const targetInput = tr.cells[1].querySelector('input');
+            if (targetInput) {
+                target = targetInput.value ? targetInput.value : '-';
+            }
+
+            // Check input for actual score
+            const actualInput = tr.cells[2].querySelector('input');
+            const inputVal = actualInput ? (actualInput.value || 'N/A') : tr.cells[2].innerText;
+
+            const statusCell = tr.cells[3];
+            const statusText = statusCell ? statusCell.textContent : '-';
 
             let colorStyle = '#333';
             if (statusText === 'MET') colorStyle = '#27ae60';
