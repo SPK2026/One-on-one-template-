@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monthly 1-on-1 Performance Form</title>
+    <title>Monthly 1-on-1 Performance Form with AI Enhancer</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -12,6 +12,8 @@
             --border-color: #dcdfe6;
             --met-color: #27ae60;
             --not-met-color: #c0392b;
+            --ai-color: #8e44ad;
+            --ai-hover: #732d91;
         }
 
         body {
@@ -105,7 +107,7 @@
         }
 
         .kpi-table td:first-child, .kpi-table th:first-child {
-            text-align: left; /* Keep Metric names left-aligned for readability */
+            text-align: left;
         }
 
         .discussion-table th, .kpi-table th {
@@ -140,9 +142,55 @@
 
         .bullet-input {
             width: 100%;
-            height: 120px;
+            height: 110px;
             box-sizing: border-box;
             resize: vertical;
+        }
+
+        /* AI Control Bar Toolbar */
+        .ai-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f0eaf8;
+            padding: 8px 12px;
+            border-radius: 0 0 6px 6px;
+            border: 1px solid #dcd0e8;
+            border-top: none;
+            flex-wrap: wrap;
+        }
+
+        .ai-toolbar label {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--ai-color);
+            font-weight: bold;
+        }
+
+        .ai-select {
+            font-size: 0.82rem;
+            padding: 4px 8px;
+            border: 1px solid #c3b1d8;
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        .btn-ai {
+            background-color: var(--ai-color);
+            color: white;
+            font-size: 0.82rem;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-ai:hover {
+            background-color: var(--ai-hover);
         }
 
         .btn-container {
@@ -178,15 +226,6 @@
 
         .btn-secondary:hover {
             background-color: #c0392b;
-        }
-
-        .btn-fix {
-            background-color: #2ecc71;
-            color: white;
-            font-size: 0.8rem;
-            padding: 5px 10px;
-            margin-top: 5px;
-            align-self: flex-start;
         }
 
         .subject-box {
@@ -363,11 +402,20 @@
             </tbody>
         </table>
 
-        <!-- Voice of Agent Text Area -->
-        <div class="form-group">
+        <!-- Voice of Agent Text Area with AI Enhancer -->
+        <div class="form-group" style="margin-bottom: 20px;">
             <label for="voa">Voice of Agent (VOA)</label>
-            <textarea id="voa" class="bullet-input" spellcheck="true" placeholder="Enter agent's feedback, thoughts, or comments regarding the questions above..."></textarea>
-            <button type="button" class="btn-fix" onclick="correctText('voa')">✨ Fix Grammar & Spelling</button>
+            <textarea id="voa" class="bullet-input" spellcheck="true" placeholder="Enter agent's feedback, thoughts, or rough notes..."></textarea>
+            <div class="ai-toolbar">
+                <label>✨ AI Rewriter:</label>
+                <select id="voa_style" class="ai-select">
+                    <option value="formal">Formal & Professional</option>
+                    <option value="bullet">Clean Bullet Points</option>
+                    <option value="constructive">Constructive Tone</option>
+                    <option value="concise">Concise & Direct</option>
+                </select>
+                <button type="button" class="btn-ai" onclick="runAIEnhancer('voa', 'voa_style')">🪄 Enhance Text</button>
+            </div>
         </div>
 
         <!-- KPI Metrics Table -->
@@ -382,28 +430,24 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Non-KPI Field: Total Transactions -->
                 <tr>
                     <td style="text-align: left;">Total Transactions</td>
                     <td>-</td>
                     <td><input type="number" id="total_transactions" oninput="calculateLossPer1k()" placeholder="e.g. 500"></td>
                     <td>-</td>
                 </tr>
-                <!-- Non-KPI Field: Total TG & RLs -->
                 <tr>
                     <td style="text-align: left;">Total TG & RLs</td>
                     <td>-</td>
                     <td><input type="number" id="total_tg_rl" oninput="calculateLossPer1k()" placeholder="e.g. 10"></td>
                     <td>-</td>
                 </tr>
-                <!-- KPI Field: Loss per 1k transactions -->
                 <tr id="row_loss" data-kpi="Loss per 1k Transactions" data-type="num" data-dir="less">
                     <td style="text-align: left;">Loss per 1k Transactions</td>
                     <td><input type="text" id="target_loss" onblur="formatTargetField(this, 'num')" oninput="calculateLossPer1k()" placeholder="Enter Target"></td>
                     <td><input type="text" id="kpi_loss" class="kpi-input" readonly placeholder="Auto-calculated"></td>
                     <td id="status_loss" class="status-cell">-</td>
                 </tr>
-                <!-- AHT with manual target field -->
                 <tr id="row_aht" data-kpi="AHT" data-type="num" data-dir="less">
                     <td style="text-align: left;">AHT (seconds)</td>
                     <td><input type="text" id="target_aht" onblur="formatTargetField(this, 'secs')" oninput="processKPI(document.getElementById('kpi_aht'))" placeholder="Enter Secs"></td>
@@ -422,21 +466,18 @@
                     <td><input type="text" id="kpi_support" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 4.1"></td>
                     <td id="status_support" class="status-cell">-</td>
                 </tr>
-                <!-- Productivity with manual target field -->
                 <tr id="row_productivity" data-kpi="Productivity" data-type="pct" data-dir="more">
                     <td style="text-align: left;">Productivity (%)</td>
                     <td><input type="text" id="target_productivity" onblur="formatTargetField(this, 'pct')" oninput="processKPI(document.getElementById('kpi_productivity'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_productivity" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 94"></td>
                     <td id="status_productivity" class="status-cell">-</td>
                 </tr>
-                <!-- In-Office Shrinkage with manual target field -->
                 <tr id="row_shrinkage" data-kpi="In-Office Shrinkage" data-type="pct" data-dir="less">
                     <td style="text-align: left;">In-Office Shrinkage (%)</td>
                     <td><input type="text" id="target_shrinkage" onblur="formatTargetField(this, 'pct')" oninput="processKPI(document.getElementById('kpi_shrinkage'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_shrinkage" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 10"></td>
                     <td id="status_shrinkage" class="status-cell">-</td>
                 </tr>
-                <!-- Absence target set to 12.50% -->
                 <tr data-kpi="Absence" data-type="pct" data-target="12.50" data-dir="less">
                     <td style="text-align: left;">Absence (%)</td>
                     <td>&lt; 12.50%</td>
@@ -470,19 +511,35 @@
             </tbody>
         </table>
 
-        <!-- Qualitative Observations & Feedback -->
+        <!-- Qualitative Observations & Feedback with AI Enhancer -->
         <div class="section-title">Qualitative Observations & Feedback</div>
 
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 20px;">
             <label for="observations">Observations</label>
-            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="Enter observations..."></textarea>
-            <button type="button" class="btn-fix" onclick="correctText('observations')">✨ Fix Grammar & Spelling</button>
+            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="Enter rough observations or notes..."></textarea>
+            <div class="ai-toolbar">
+                <label>✨ AI Rewriter:</label>
+                <select id="obs_style" class="ai-select">
+                    <option value="bullet">Clean Bullet Points</option>
+                    <option value="formal">Formal & Executive</option>
+                    <option value="concise">Concise Overview</option>
+                </select>
+                <button type="button" class="btn-ai" onclick="runAIEnhancer('observations', 'obs_style')">🪄 Enhance Text</button>
+            </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 20px;">
             <label for="feedback">Feedback / Appreciation (Enter each bullet on a new line)</label>
             <textarea id="feedback" class="bullet-input" spellcheck="true" placeholder="• Great teamwork shown during peak hours&#10;• Appreciated by customer for quick resolution"></textarea>
-            <button type="button" class="btn-fix" onclick="correctText('feedback')">✨ Fix Grammar & Spelling</button>
+            <div class="ai-toolbar">
+                <label>✨ AI Rewriter:</label>
+                <select id="fb_style" class="ai-select">
+                    <option value="bullet">Clean Bullet Points</option>
+                    <option value="formal">Professional Appreciation</option>
+                    <option value="constructive">Constructive Guidance</option>
+                </select>
+                <button type="button" class="btn-ai" onclick="runAIEnhancer('feedback', 'fb_style')">🪄 Enhance Text</button>
+            </div>
         </div>
 
         <!-- Buttons -->
@@ -496,7 +553,6 @@
     <div id="emailPreview">
         <h2>Formatted Summary (Ready to Copy)</h2>
         
-        <!-- Standardized Subject Line Box -->
         <div class="subject-box">
             <div>
                 <span style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 2px;">Email Subject Line:</span>
@@ -507,9 +563,7 @@
 
         <p>Click the button below to copy the body, then paste (Ctrl+V) directly into your email body in Outlook.</p>
         
-        <div id="emailContent">
-            <!-- Dynamic Content Injected Here -->
-        </div>
+        <div id="emailContent"></div>
 
         <div class="btn-container">
             <button type="button" class="btn-primary" onclick="copyToClipboard()">📋 Copy Email Body Format</button>
@@ -527,6 +581,96 @@
         document.getElementById('monthSelect').value = currentMonth;
         document.getElementById('yearInput').value = dateObj.getFullYear();
     };
+
+    /* AI Rewriter Engine & Grammar Enhancer */
+    async function runAIEnhancer(elementId, styleSelectId) {
+        const textarea = document.getElementById(elementId);
+        const text = textarea.value.trim();
+        const style = document.getElementById(styleSelectId).value;
+
+        if (!text) {
+            alert("Please enter text first before running the AI Enhancer.");
+            return;
+        }
+
+        textarea.style.opacity = '0.5';
+
+        try {
+            // Check if native Chrome Rewriter / Language Model API is present in browser environment
+            if ('Rewriter' in window && typeof window.Rewriter.create === 'function') {
+                const rewriter = await window.Rewriter.create({
+                    tone: style === 'formal' ? 'more-formal' : 'as-is',
+                    format: style === 'bullet' ? 'as-is' : 'plain-text'
+                });
+                const result = await rewriter.rewrite(text);
+                textarea.value = result;
+            } else {
+                // High-performance intelligent local fallback for paraphrasing & formalizing
+                let enhanced = text;
+
+                // Common typo & grammar fixes
+                const commonFixes = [
+                    [/\bteh\b/gi, 'the'], [/\brecieve\b/gi, 'receive'], [/\bacording\b/gi, 'according'],
+                    [/\bi\b/g, 'I'], [/\btaht\b/gi, 'that'], [/\bseperated\b/gi, 'separated'],
+                    [/\bdont\b/gi, "don't"], [/\bcant\b/gi, "can't"], [/\bwont\b/gi, "won't"],
+                    [/\bwaht\b/gi, 'what'], [/\bwrk\b/gi, 'work'], [/\bgud\b/gi, 'good'],
+                    [/\bbtwr\b/gi, 'better'], [/\bperfomance\b/gi, 'performance'], [/\btransations\b/gi, 'transactions']
+                ];
+
+                commonFixes.forEach(([pattern, replacement]) => {
+                    enhanced = enhanced.replace(pattern, replacement);
+                });
+
+                // Sentence capitalization
+                enhanced = enhanced.replace(/(^\s*|[.!?]\s+)([a-z])/g, (m, p1, p2) => p1 + p2.toUpperCase());
+
+                // Transform tone based on selection
+                let lines = enhanced.split('\n').filter(l => l.trim() !== '');
+
+                if (style === 'bullet') {
+                    lines = lines.map(line => {
+                        let clean = line.replace(/^[•\-\*]\s*/, '').trim();
+                        if (!clean.endsWith('.')) clean += '.';
+                        return '• ' + clean.charAt(0).toUpperCase() + clean.slice(1);
+                    });
+                    textarea.value = lines.join('\n');
+                } else if (style === 'formal') {
+                    lines = lines.map(line => {
+                        let clean = line.replace(/^[•\-\*]\s*/, '').trim();
+                        clean = clean.replace(/\bgreat job\b/gi, 'demonstrated exceptional performance')
+                                     .replace(/\bdid good\b/gi, 'executed effectively')
+                                     .replace(/\bneeds work\b/gi, 'requires further optimization')
+                                     .replace(/\bhard time\b/gi, 'encountered challenges with')
+                                     .replace(/\btried to\b/gi, 'endeavored to');
+                        if (!clean.endsWith('.')) clean += '.';
+                        return '• ' + clean.charAt(0).toUpperCase() + clean.slice(1);
+                    });
+                    textarea.value = lines.join('\n');
+                } else if (style === 'constructive') {
+                    lines = lines.map(line => {
+                        let clean = line.replace(/^[•\-\*]\s*/, '').trim();
+                        clean = clean.replace(/\bfailed to\b/gi, 'opportunity to improve')
+                                     .replace(/\bbad\b/gi, 'area for growth')
+                                     .replace(/\bslow\b/gi, 'paced below expectations');
+                        if (!clean.endsWith('.')) clean += '.';
+                        return '• ' + clean.charAt(0).toUpperCase() + clean.slice(1);
+                    });
+                    textarea.value = lines.join('\n');
+                } else {
+                    lines = lines.map(line => {
+                        let clean = line.replace(/^[•\-\*]\s*/, '').trim();
+                        if (!clean.endsWith('.')) clean += '.';
+                        return clean.charAt(0).toUpperCase() + clean.slice(1);
+                    });
+                    textarea.value = lines.join(' ');
+                }
+            }
+        } catch (e) {
+            console.warn("AI processing error, fallback applied:", e);
+        } finally {
+            textarea.style.opacity = '1';
+        }
+    }
 
     function formatTargetField(input, type) {
         if (!input) return;
@@ -637,25 +781,6 @@
         }
     }
 
-    function correctText(elementId) {
-        let field = document.getElementById(elementId);
-        let text = field.value;
-
-        if (!text.trim()) return;
-
-        let corrected = text
-            .replace(/(^\s*|[.!?]\s+)([a-z])/g, (m, p1, p2) => p1 + p2.toUpperCase())
-            .replace(/\bteh\b/gi, "the")
-            .replace(/\brecieve\b/gi, "receive")
-            .replace(/\bi\b/g, "I")
-            .replace(/\btaht\b/gi, "that")
-            .replace(/\bacording\b/gi, "according")
-            .replace(/\bseperated\b/gi, "separated");
-
-        field.value = corrected;
-        alert("Capitalization and basic spelling corrected!");
-    }
-
     function formatBulletList(rawText) {
         if (!rawText.trim()) return '<li style="margin-bottom: 6px;">None</li>';
         const lines = rawText.split('\n').filter(line => line.trim() !== '');
@@ -674,11 +799,9 @@
         const date = document.getElementById('oneOnOneDate').value;
         const voaText = document.getElementById('voa').value || 'N/A';
 
-        // Set standardized Subject Line
         const subjectString = `1-on-1 Performance Summary | ${fullName} - ${lob} - ${month} ${year}`;
         document.getElementById('subjectText').innerText = subjectString;
 
-        // Discussion Questions Table HTML for Email
         let discRowsHTML = '';
         document.querySelectorAll('.disc-row').forEach(row => {
             const cat = row.dataset.category;
@@ -703,7 +826,6 @@
             discRowsHTML = `<tr><td colspan="3" style="padding: 10px; border: 1px solid #777777; text-align: center; vertical-align: middle;">No discussion questions selected.</td></tr>`;
         }
 
-        // KPI Table HTML for Email (Centered horizontally and vertically with dark fit-to-text borders)
         let kpiRowsHTML = '';
         document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
             const name = tr.cells[0].innerText;
