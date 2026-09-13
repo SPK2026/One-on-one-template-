@@ -192,6 +192,24 @@
             background-color: var(--ai-hover);
         }
 
+        .btn-summary {
+            background-color: #2e7d32;
+            color: white;
+            font-size: 0.82rem;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .btn-summary:hover {
+            background-color: #1b5e20;
+        }
+
         .btn-container {
             display: flex;
             gap: 10px;
@@ -542,9 +560,11 @@
 
         <div class="form-group" style="margin-bottom: 20px;">
             <label for="observations">Observations</label>
-            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="Enter observations..."></textarea>
+            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="Enter observations or click below to auto-generate from KPI entries..."></textarea>
             <div class="ai-toolbar">
-                <label>✨ AI Enhancer Options:</label>
+                <button type="button" class="btn-summary" onclick="generateKPIObservationSummary()">📊 Auto-Generate KPI Summary Line</button>
+                <span style="border-left: 1px solid #ccc; height: 18px; margin: 0 4px;"></span>
+                <label>✨ AI Options:</label>
                 <select id="obs_style" class="ai-select">
                     <option value="formal">Formal & Professional Bullets</option>
                     <option value="executive">Executive Summary</option>
@@ -607,6 +627,58 @@
         document.getElementById('monthSelect').value = currentMonth;
         document.getElementById('yearInput').value = dateObj.getFullYear();
     };
+
+    /* Auto-Generate KPI Observation Summary */
+    function generateKPIObservationSummary() {
+        let generatedBullets = [];
+
+        document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
+            const cells = tr.cells;
+            if (cells.length < 6) return;
+
+            const metricName = cells[0].innerText.trim();
+            
+            let targetText = cells[1].innerText.trim();
+            const targetInput = cells[1].querySelector('input');
+            if (targetInput) targetText = targetInput.value.trim();
+
+            let actualText = '';
+            const actualInput = cells[2].querySelector('input');
+            if (actualInput) actualText = actualInput.value.trim();
+            else actualText = cells[2].innerText.trim();
+
+            const varianceText = cells[3].textContent.trim();
+            const pctText = cells[4].textContent.trim();
+            const statusText = cells[5].textContent.trim();
+
+            if (actualText && actualText !== '-' && actualText !== 'N/A' && targetText && targetText !== '-') {
+                let comparison = statusText === 'NOT MET' ? 'higher than' : 'within / beating';
+                if (metricName.toLowerCase().includes('csat') || metricName.toLowerCase().includes('quality') || metricName.toLowerCase().includes('productivity')) {
+                    comparison = statusText === 'NOT MET' ? 'lower than' : 'meeting / exceeding';
+                }
+
+                let line = `• ${metricName} is ${comparison} target: against the ${targetText} target, you delivered ${actualText} (Variance: ${varianceText}, Scored: ${pctText}).`;
+                generatedBullets.push(line);
+            }
+        });
+
+        if (generatedBullets.length === 0) {
+            alert('Please fill in KPI Targets and Actual Scores first to auto-generate the summary.');
+            return;
+        }
+
+        const obsField = document.getElementById('observations');
+        let currentText = obsField.value.trim();
+        let newSummary = generatedBullets.join('\n');
+
+        if (currentText) {
+            obsField.value = currentText + '\n' + newSummary;
+        } else {
+            obsField.value = newSummary;
+        }
+
+        alert('KPI Observation Summary auto-generated into the Observations field!');
+    }
 
     /* High-Performance Natural Language Correction & Paraphrasing Engine */
     function enhanceText(elementId, styleSelectId) {
@@ -725,7 +797,6 @@
         let diff = actual - target;
         let varStr = (diff > 0 ? '+' : '') + diff.toFixed(2);
         
-        // Directly calculate Actual / Target across all KPIs
         let pctVal = ((actual / target) * 100).toFixed(1);
 
         if (type === 'pct') {
