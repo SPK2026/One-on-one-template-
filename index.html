@@ -723,18 +723,10 @@
         }
 
         let diff = actual - target;
-        let varStr = '';
-        let pctVal = 0;
-
-        if (dir === 'less') {
-            // Lower is better (e.g., AHT, Shrinkage, Loss)
-            varStr = (diff > 0 ? '+' : '') + diff.toFixed(2);
-            pctVal = ((target / actual) * 100).toFixed(1);
-        } else {
-            // Higher is better (e.g., CSAT, Quality, Productivity)
-            varStr = (diff > 0 ? '+' : '') + diff.toFixed(2);
-            pctVal = ((actual / target) * 100).toFixed(1);
-        }
+        let varStr = (diff > 0 ? '+' : '') + diff.toFixed(2);
+        
+        // Directly calculate Actual / Target across all KPIs
+        let pctVal = ((actual / target) * 100).toFixed(1);
 
         if (type === 'pct') {
             varStr += '%';
@@ -804,7 +796,6 @@
         const dir = tr.dataset.dir;
         const statusCell = tr.querySelector('.status-cell');
 
-        const kpiName = tr.dataset.kpi.toLowerCase().replace(/[^a-z]/g, '');
         const varCell = tr.cells[3];
         const pctCell = tr.cells[4];
 
