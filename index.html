@@ -140,7 +140,7 @@
             font-weight: bold;
         }
 
-        /* Overall Scorecard Banner */
+        /* Scorecard Banner */
         .scorecard-box {
             background: #f4f6f9;
             border: 2px solid var(--accent-color);
@@ -161,7 +161,7 @@
         }
 
         .scorecard-val {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: bold;
         }
 
@@ -317,8 +317,8 @@
         <div class="section-title">General Information</div>
         <div class="grid-2">
             <div class="form-group">
-                <label for="agentName">Agent Name *</label>
-                <input type="text" id="agentName" required placeholder="e.g. Jane Doe">
+                <label for="employeeName">Name *</label>
+                <input type="text" id="employeeName" required placeholder="e.g. Jane Doe">
             </div>
             <div class="form-group">
                 <label for="lob">Line of Business (LOB) *</label>
@@ -352,7 +352,7 @@
         </div>
 
         <!-- Discussion Topics -->
-        <div class="section-title">Discussion Topics & Voice of Agent (VOA)</div>
+        <div class="section-title">Discussion Topics & Voice of Employee (VOE)</div>
         <table class="discussion-table">
             <thead>
                 <tr>
@@ -404,8 +404,8 @@
                     <td>
                         <select class="q-select" style="width: 100%;">
                             <option value="">-- Select Question --</option>
-                            <option value="Q1: What went well in your interactions this month? Any calls/chats you're particularly proud of?">Q1: What went well in your interactions this month? Any calls/chats you're particularly proud of?</option>
-                            <option value="Q2: Any challenges you faced while handling customers?">Q2: Any challenges you faced while handling customers?</option>
+                            <option value="Q1: What went well in your interactions this month? Any tasks or projects you're particularly proud of?">Q1: What went well in your interactions this month? Any tasks or projects you're particularly proud of?</option>
+                            <option value="Q2: Any challenges you faced while managing operations or interactions?">Q2: Any challenges you faced while managing operations or interactions?</option>
                             <option value="Q3: Were there any escalations or difficult conversations you'd like feedback on?">Q3: Were there any escalations or difficult conversations you'd like feedback on?</option>
                             <option value="Q4: Is there any skill you feel you need more coaching or practice on?">Q4: Is there any skill you feel you need more coaching or practice on?</option>
                             <option value="Q5: Did you try any new approach or technique that worked well?">Q5: Did you try any new approach or technique that worked well?</option>
@@ -427,7 +427,7 @@
                         <select class="q-select" style="width: 100%;">
                             <option value="">-- Select Question --</option>
                             <option value="Q1: What skill or area would you like to improve over the next month?">Q1: What skill or area would you like to improve over the next month?</option>
-                            <option value="Q2: Do you have clear understanding of how overtime works and how much you can earn approximately on monthly basis?">Q2: Do you have clear understanding of how overtime works and how much you can earn approximately on monthly basis?</option>
+                            <option value="Q2: Do you have clear understanding of team operational priorities and goals?">Q2: Do you have clear understanding of team operational priorities and goals?</option>
                             <option value="Q3: Where do you see yourself growing in the team over the next 3–6 months?">Q3: Where do you see yourself growing in the team over the next 3–6 months?</option>
                         </select>
                     </td>
@@ -444,18 +444,18 @@
             </tbody>
         </table>
 
-        <!-- Voice of Agent Text Area -->
+        <!-- Voice of Employee Text Area -->
         <div class="form-group" style="margin-bottom: 20px;">
-            <label for="voa">Voice of Agent (VOA)</label>
-            <textarea id="voa" class="bullet-input" spellcheck="true" placeholder="Enter agent feedback, thoughts, or rough notes..."></textarea>
+            <label for="voe">Voice of Employee (VOE)</label>
+            <textarea id="voe" class="bullet-input" spellcheck="true" placeholder="Enter feedback, thoughts, or discussion notes..."></textarea>
             <div class="ai-toolbar">
                 <label>✨ AI Enhancer Options:</label>
-                <select id="voa_style" class="ai-select">
+                <select id="voe_style" class="ai-select">
                     <option value="formal">Formal & Professional Bullets</option>
                     <option value="executive">Executive Paragraph</option>
                     <option value="constructive">Constructive & Professional</option>
                 </select>
-                <button type="button" class="btn-ai" onclick="enhanceText('voa', 'voa_style')">🪄 Enhance Grammar & Paraphrase</button>
+                <button type="button" class="btn-ai" onclick="enhanceText('voe', 'voe_style')">🪄 Enhance Grammar & Paraphrase</button>
             </div>
         </div>
 
@@ -464,8 +464,8 @@
 
         <!-- KPI Scorecard Banner -->
         <div class="scorecard-box">
-            <span class="scorecard-title">Overall KPI Compliance Scorecard:</span>
-            <span id="scorecardDisplay" class="scorecard-val">0 / 0 Met (0%) — Target: 90%+ Compliance</span>
+            <span class="scorecard-title">Overall KPI Score:</span>
+            <span id="scorecardDisplay" class="scorecard-val">0 / 0 Met (0%)</span>
         </div>
 
         <table class="kpi-table" id="kpiTable">
@@ -608,7 +608,7 @@
 
         <div class="form-group" style="margin-bottom: 20px;">
             <label for="feedback">Feedback / Appreciation (Enter each bullet on a new line)</label>
-            <textarea id="feedback" class="bullet-input" spellcheck="true" placeholder="• Great teamwork shown during peak hours&#10;• Appreciated by customer for quick resolution"></textarea>
+            <textarea id="feedback" class="bullet-input" spellcheck="true" placeholder="• Great leadership shown during peak operational hours&#10;• Appreciated for proactive team support and quick resolution"></textarea>
             <div class="ai-toolbar">
                 <label>✨ AI Enhancer Options:</label>
                 <select id="fb_style" class="ai-select">
@@ -634,7 +634,7 @@
         <div class="subject-box">
             <div>
                 <span style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 2px;">Email Subject Line:</span>
-                <span id="subjectText" class="subject-text">1-on-1 Performance Summary | Agent Name - LOB - Month Year</span>
+                <span id="subjectText" class="subject-text">1-on-1 Performance Summary | Name - LOB - Month Year</span>
             </div>
             <button type="button" class="btn-primary" style="font-size: 0.85rem; padding: 6px 12px; white-space: nowrap;" onclick="copySubjectLine()">📋 Copy Subject Line</button>
         </div>
@@ -661,7 +661,7 @@
         updateScorecard();
     };
 
-    /* Overall Scorecard Calculation */
+    /* Scorecard Calculation */
     function updateScorecard() {
         let totalKPIs = 0;
         let metKPIs = 0;
@@ -682,19 +682,22 @@
         const scorecardEl = document.getElementById('scorecardDisplay');
 
         if (totalKPIs === 0) {
-            scorecardEl.innerHTML = `0 / 0 Met (0%) — <span style="color: #666;">Target: 90%+ Compliance</span>`;
-            scorecardEl.className = 'scorecard-val';
-            return { metKPIs, totalKPIs, pctVal: 0 };
+            scorecardEl.innerHTML = `<span style="color: #666; font-weight: bold;">0 / 0 Met (0%)</span>`;
+            return { metKPIs, totalKPIs, pctVal: 0, colorCode: '#666666' };
         }
 
         const pctVal = Math.round((metKPIs / totalKPIs) * 100);
-        const isTargetMet = pctVal >= 90;
-        const colorStyle = isTargetMet ? 'color: #27ae60;' : 'color: #c0392b;';
-        const resultTag = isTargetMet ? '<b>[TARGET MET]</b>' : '<b>[BELOW TARGET]</b>';
 
-        scorecardEl.innerHTML = `<span style="${colorStyle}">${metKPIs} / ${totalKPIs} Met (<b>${pctVal}%</b>)</span> — Target: 90%+ Compliance ${resultTag}`;
+        let colorCode = '#c0392b'; // Red
+        if (pctVal >= 90) {
+            colorCode = '#27ae60'; // Green
+        } else if (pctVal >= 75) {
+            colorCode = '#d35400'; // Amber
+        }
 
-        return { metKPIs, totalKPIs, pctVal, isTargetMet };
+        scorecardEl.innerHTML = `<span style="color: ${colorCode}; font-weight: bold;">${metKPIs} / ${totalKPIs} Met (${pctVal}%)</span>`;
+
+        return { metKPIs, totalKPIs, pctVal, colorCode };
     }
 
     /* Auto-Generate KPI Observation Summary */
@@ -726,7 +729,7 @@
                     comparison = statusText === 'NOT MET' ? 'lower than' : 'meeting / exceeding';
                 }
 
-                let line = `• ${metricName} is ${comparison} target: against the ${targetText} target, you delivered ${actualText} (Variance: ${varianceText}, Scored: ${pctText}).`;
+                let line = `• ${metricName} is ${comparison} target: against the ${targetText} target, performance was ${actualText} (Variance: ${varianceText}, Scored: ${pctText}).`;
                 generatedBullets.push(line);
             }
         });
@@ -992,23 +995,33 @@
         updateScorecard();
     }
 
+    /* Fixed Bullet Formatting for HTML Email Preview */
     function formatBulletList(rawText) {
-        if (!rawText.trim()) return '<li style="margin-bottom: 4px;">None</li>';
-        const lines = rawText.split('\n').filter(line => line.trim() !== '');
+        if (!rawText || !rawText.trim()) return '<li style="margin-bottom: 4px; font-size: 13px;">None</li>';
+        
+        // Split by new line
+        const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        
+        if (lines.length === 0) return '<li style="margin-bottom: 4px; font-size: 13px;">None</li>';
+
         return lines.map(line => {
-            let cleanLine = line.replace(/^[•\-\*]\s*/, '');
+            // Strip any existing leading bullet symbol (•, -, *, or numbered lists like 1.) to avoid double bulleting
+            let cleanLine = line.replace(/^[•\-\*]\s*/, '').replace(/^\d+[\.\)]\s*/, '').trim();
+            if (!cleanLine) cleanLine = line; // Fallback if line was only a symbol
             return `<li style="margin-bottom: 4px; font-size: 13px;">${cleanLine}</li>`;
         }).join('');
     }
 
     function generateEmailPreview() {
-        const fullName = document.getElementById('agentName').value.trim() || 'Agent';
+        const fullName = document.getElementById('employeeName').value.trim() || 'Employee';
         const firstName = fullName.split(' ')[0];
         const lob = document.getElementById('lob').value || 'N/A';
         const month = document.getElementById('monthSelect').value || 'Month';
         const year = document.getElementById('yearInput').value || 'Year';
         const date = document.getElementById('oneOnOneDate').value;
-        const voaText = document.getElementById('voa').value || 'N/A';
+        const voeText = document.getElementById('voe').value || '';
+        const obsText = document.getElementById('observations').value || '';
+        const fbText = document.getElementById('feedback').value || '';
 
         const scorecardData = updateScorecard();
 
@@ -1074,9 +1087,6 @@
             `;
         });
 
-        const scoreColor = scorecardData.isTargetMet ? '#27ae60' : '#c0392b';
-        const scoreTag = scorecardData.isTargetMet ? 'MET' : 'BELOW TARGET';
-
         const emailHTML = `
             <div style="font-family: Arial, sans-serif; font-size: 13px; line-height: 1.5; color: #333333; max-width: 620px;">
                 <p style="margin: 0 0 12px 0; font-size: 14px;">Hi <strong>${firstName}</strong>,</p>
@@ -1085,7 +1095,7 @@
                 <h4 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 4px; margin: 18px 0 10px 0; font-size: 14px;">Monthly 1-on-1 Summary</h4>
                 
                 <table style="width: 100%; margin-bottom: 15px; border-collapse: collapse; font-size: 12px;">
-                    <tr><td style="padding: 2px 0;"><strong>Agent Name:</strong> ${fullName}</td><td style="padding: 2px 0;"><strong>LOB:</strong> ${lob}</td></tr>
+                    <tr><td style="padding: 2px 0;"><strong>Name:</strong> ${fullName}</td><td style="padding: 2px 0;"><strong>LOB:</strong> ${lob}</td></tr>
                     <tr><td style="padding: 2px 0;"><strong>Month:</strong> ${month} ${year}</td><td style="padding: 2px 0;"><strong>Date:</strong> ${date}</td></tr>
                 </table>
 
@@ -1103,16 +1113,16 @@
                     </tbody>
                 </table>
 
-                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Voice of Agent (VOA)</h4>
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Voice of Employee (VOE)</h4>
                 <ul style="padding-left: 18px; margin: 0 0 15px 0;">
-                    ${formatBulletList(voaText)}
+                    ${formatBulletList(voeText)}
                 </ul>
 
                 <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">KPI Performance Summary</h4>
                 
                 <!-- Email Scorecard Summary Line -->
-                <div style="background: #f8f9fa; border: 1px solid #cccccc; padding: 8px 12px; margin-bottom: 10px; font-size: 12px; border-left: 4px solid ${scoreColor};">
-                    <strong>Overall KPI Compliance Score:</strong> <span style="color: ${scoreColor}; font-weight: bold;">${scorecardData.metKPIs} / ${scorecardData.totalKPIs} Met (${scorecardData.pctVal}%)</span> — Target: <strong>90%+</strong> Compliance (${scoreTag})
+                <div style="background: #f8f9fa; border: 1px solid #cccccc; padding: 8px 12px; margin-bottom: 10px; font-size: 13px; border-left: 4px solid ${scorecardData.colorCode};">
+                    <strong>Overall KPI Score:</strong> <span style="color: ${scorecardData.colorCode}; font-weight: bold;">${scorecardData.metKPIs} / ${scorecardData.totalKPIs} Met (${scorecardData.pctVal}%)</span>
                 </div>
 
                 <table border="1" cellpadding="4" cellspacing="0" style="border-collapse: collapse; width: 100%; border: 1px solid #b0b0b0; margin-bottom: 15px;">
@@ -1133,12 +1143,12 @@
 
                 <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Observations</h4>
                 <ul style="padding-left: 18px; margin: 0 0 15px 0;">
-                    ${formatBulletList(document.getElementById('observations').value)}
+                    ${formatBulletList(obsText)}
                 </ul>
 
                 <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Feedback & Appreciation</h4>
                 <ul style="padding-left: 18px; margin: 0 0 15px 0;">
-                    ${formatBulletList(document.getElementById('feedback').value)}
+                    ${formatBulletList(fbText)}
                 </ul>
             </div>
         `;
