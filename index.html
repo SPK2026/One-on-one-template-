@@ -25,7 +25,7 @@
         }
 
         .container {
-            max-width: 950px;
+            max-width: 1000px;
             margin: 0 auto;
             background: #ffffff;
             padding: 30px;
@@ -98,11 +98,11 @@
         }
 
         .kpi-table th, .kpi-table td {
-            border: 2px solid #111111;
-            padding: 8px 12px;
+            border: 1px solid #ccc;
+            padding: 6px 8px;
             text-align: center;
             vertical-align: middle;
-            white-space: nowrap;
+            font-size: 0.88rem;
         }
 
         .kpi-table td:first-child, .kpi-table th:first-child {
@@ -117,11 +117,12 @@
 
         .kpi-input, .kpi-table input[type="text"], .kpi-table input[type="number"] {
             width: 90%;
-            max-width: 140px;
+            max-width: 110px;
             text-align: center;
             font-weight: bold;
             box-sizing: border-box;
-            padding: 6px;
+            padding: 5px;
+            font-size: 0.85rem;
         }
 
         .status-cell {
@@ -255,10 +256,10 @@
 
         #emailContent {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
+            line-height: 1.5;
             color: #333;
             background: #ffffff;
-            padding: 20px;
+            padding: 15px;
             border: 1px solid #ddd;
         }
     </style>
@@ -400,7 +401,7 @@
             </tbody>
         </table>
 
-        <!-- Voice of Agent Text Area with Enhanced AI -->
+        <!-- Voice of Agent Text Area -->
         <div class="form-group" style="margin-bottom: 20px;">
             <label for="voa">Voice of Agent (VOA)</label>
             <textarea id="voa" class="bullet-input" spellcheck="true" placeholder="Enter agent feedback, thoughts, or rough notes..."></textarea>
@@ -423,6 +424,8 @@
                     <th style="text-align: left;">Metric</th>
                     <th>Target</th>
                     <th>Actual Score</th>
+                    <th>Variance</th>
+                    <th>% Scored</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -432,77 +435,103 @@
                     <td>-</td>
                     <td><input type="number" id="total_transactions" oninput="calculateLossPer1k()" placeholder="e.g. 500"></td>
                     <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
                 </tr>
                 <tr>
                     <td style="text-align: left;">Total TG & RLs</td>
                     <td>-</td>
                     <td><input type="number" id="total_tg_rl" oninput="calculateLossPer1k()" placeholder="e.g. 10"></td>
                     <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
                 </tr>
                 <tr id="row_loss" data-kpi="Loss per 1k Transactions" data-type="num" data-dir="less">
                     <td style="text-align: left;">Loss per 1k Transactions</td>
                     <td><input type="text" id="target_loss" onblur="formatTargetField(this, 'num')" oninput="calculateLossPer1k()" placeholder="Enter Target"></td>
                     <td><input type="text" id="kpi_loss" class="kpi-input" readonly placeholder="Auto-calculated"></td>
+                    <td id="variance_loss">-</td>
+                    <td id="pct_loss">-</td>
                     <td id="status_loss" class="status-cell">-</td>
                 </tr>
                 <tr id="row_aht" data-kpi="AHT" data-type="num" data-dir="less">
                     <td style="text-align: left;">AHT (seconds)</td>
                     <td><input type="text" id="target_aht" onblur="formatTargetField(this, 'secs')" oninput="processKPI(document.getElementById('kpi_aht'))" placeholder="Enter Secs"></td>
                     <td><input type="text" id="kpi_aht" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 980"></td>
+                    <td id="variance_aht">-</td>
+                    <td id="pct_aht">-</td>
                     <td id="status_aht" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="Transfers" data-type="pct" data-target="4" data-dir="less">
                     <td style="text-align: left;">Transfers (%)</td>
                     <td>&lt; 4%</td>
                     <td><input type="text" id="kpi_transfers" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 3.2"></td>
+                    <td id="variance_transfers">-</td>
+                    <td id="pct_transfers">-</td>
                     <td id="status_transfers" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="Support Placement" data-type="pct" data-target="5" data-dir="less">
                     <td style="text-align: left;">Support Placement (%)</td>
                     <td>&lt; 5%</td>
                     <td><input type="text" id="kpi_support" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 4.1"></td>
+                    <td id="variance_support">-</td>
+                    <td id="pct_support">-</td>
                     <td id="status_support" class="status-cell">-</td>
                 </tr>
                 <tr id="row_productivity" data-kpi="Productivity" data-type="pct" data-dir="more">
                     <td style="text-align: left;">Productivity (%)</td>
                     <td><input type="text" id="target_productivity" onblur="formatTargetField(this, 'pct')" oninput="processKPI(document.getElementById('kpi_productivity'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_productivity" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 94"></td>
+                    <td id="variance_productivity">-</td>
+                    <td id="pct_productivity">-</td>
                     <td id="status_productivity" class="status-cell">-</td>
                 </tr>
                 <tr id="row_shrinkage" data-kpi="In-Office Shrinkage" data-type="pct" data-dir="less">
                     <td style="text-align: left;">In-Office Shrinkage (%)</td>
                     <td><input type="text" id="target_shrinkage" onblur="formatTargetField(this, 'pct')" oninput="processKPI(document.getElementById('kpi_shrinkage'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_shrinkage" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 10"></td>
+                    <td id="variance_shrinkage">-</td>
+                    <td id="pct_shrinkage">-</td>
                     <td id="status_shrinkage" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="Absence" data-type="pct" data-target="12.50" data-dir="less">
                     <td style="text-align: left;">Absence (%)</td>
                     <td>&lt; 12.50%</td>
                     <td><input type="text" id="kpi_absence" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 2"></td>
+                    <td id="variance_absence">-</td>
+                    <td id="pct_absence">-</td>
                     <td id="status_absence" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="CSAT Overall" data-type="pct" data-target="68" data-dir="more">
                     <td style="text-align: left;">CSAT Score - Overall (%)</td>
                     <td>68%</td>
                     <td><input type="text" id="kpi_csat_overall" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 72"></td>
+                    <td id="variance_csat_overall">-</td>
+                    <td id="pct_csat_overall">-</td>
                     <td id="status_csat_overall" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="CSAT Booking" data-type="pct" data-target="70" data-dir="more">
                     <td style="text-align: left;">CSAT Score - Booking (%)</td>
                     <td>70%</td>
                     <td><input type="text" id="kpi_csat_booking" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 75"></td>
+                    <td id="variance_csat_booking">-</td>
+                    <td id="pct_csat_booking">-</td>
                     <td id="status_csat_booking" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="CSAT English" data-type="pct" data-target="65" data-dir="more">
                     <td style="text-align: left;">CSAT Score - English (%)</td>
                     <td>65%</td>
                     <td><input type="text" id="kpi_csat_english" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 68"></td>
+                    <td id="variance_csat_english">-</td>
+                    <td id="pct_csat_english">-</td>
                     <td id="status_csat_english" class="status-cell">-</td>
                 </tr>
                 <tr data-kpi="Quality Scores" data-type="pct" data-target="92.5" data-dir="more">
                     <td style="text-align: left;">Quality Scores (%)</td>
                     <td>92.5%</td>
                     <td><input type="text" id="kpi_quality" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 95"></td>
+                    <td id="variance_quality">-</td>
+                    <td id="pct_quality">-</td>
                     <td id="status_quality" class="status-cell">-</td>
                 </tr>
             </tbody>
@@ -526,7 +555,7 @@
         </div>
 
         <div class="form-group" style="margin-bottom: 20px;">
-            <label for="feedback">Action Plan / Feedback / Appreciation (Enter each bullet on a new line)</label>
+            <label for="feedback">Feedback / Appreciation (Enter each bullet on a new line)</label>
             <textarea id="feedback" class="bullet-input" spellcheck="true" placeholder="• Great teamwork shown during peak hours&#10;• Appreciated by customer for quick resolution"></textarea>
             <div class="ai-toolbar">
                 <label>✨ AI Enhancer Options:</label>
@@ -574,7 +603,7 @@
         document.getElementById('oneOnOneDate').value = today;
         
         const dateObj = new Date();
-        const currentMonth = dateObj.toLocaleString('default', { month: 'Long' });
+        const currentMonth = dateObj.toLocaleString('default', { month: 'long' });
         document.getElementById('monthSelect').value = currentMonth;
         document.getElementById('yearInput').value = dateObj.getFullYear();
     };
@@ -590,9 +619,7 @@
             return;
         }
 
-        // 1. Comprehensive Dictionary for Spelling & Grammar Corrections
         const corrections = [
-            // Spelling errors & typos
             [/\bgrammer\b/gi, "grammar"],
             [/\bspellings\b/gi, "spelling"],
             [/\bteh\b/gi, "the"],
@@ -621,7 +648,6 @@
             [/\bchatt\b/gi, "chat"],
             [/\bcooperat\b/gi, "cooperate"],
 
-            // Phrase Formalization & Paraphrasing
             [/\bdid good\b/gi, "demonstrated strong performance"],
             [/\bdoing good\b/gi, "performing effectively"],
             [/\bgreat job\b/gi, "exhibited commendable dedication"],
@@ -636,30 +662,22 @@
             [/\bno issue\b/gi, "maintained seamless operations"]
         ];
 
-        // Apply Spelling and Phrase replacements
         corrections.forEach(([pattern, replacement]) => {
             text = text.replace(pattern, replacement);
         });
 
-        // Correct lowercase stand-alone "i" to "I"
         text = text.replace(/\bi\b/g, "I");
 
-        // Split text into individual lines or statements
         let lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
         let processedLines = lines.map(line => {
-            // Strip leading bullet characters
             let clean = line.replace(/^[•\-\*]\s*/, '').trim();
-
-            // Fix individual line grammar: Capitalize first letter
             clean = clean.charAt(0).toUpperCase() + clean.slice(1);
 
-            // Ensure line ends with proper punctuation
             if (!/[.!?]$/.test(clean)) {
                 clean += ".";
             }
 
-            // Apply Paraphrasing Styles
             if (style === "formal") {
                 return "• " + clean;
             } else if (style === "constructive") {
@@ -673,7 +691,6 @@
             return "• " + clean;
         });
 
-        // Format Output based on selected tone
         if (style === "executive") {
             field.value = processedLines.join(" ");
         } else {
@@ -700,6 +717,34 @@
         }
     }
 
+    function calculateMetrics(actual, target, dir, type) {
+        if (isNaN(actual) || isNaN(target) || target === 0) {
+            return { variance: '-', pctScored: '-' };
+        }
+
+        let diff = actual - target;
+        let varStr = '';
+        let pctVal = 0;
+
+        if (dir === 'less') {
+            // Lower is better (e.g., AHT, Shrinkage, Loss)
+            varStr = (diff > 0 ? '+' : '') + diff.toFixed(2);
+            pctVal = ((target / actual) * 100).toFixed(1);
+        } else {
+            // Higher is better (e.g., CSAT, Quality, Productivity)
+            varStr = (diff > 0 ? '+' : '') + diff.toFixed(2);
+            pctVal = ((actual / target) * 100).toFixed(1);
+        }
+
+        if (type === 'pct') {
+            varStr += '%';
+        } else if (type === 'num' && target > 10) {
+            varStr += 's';
+        }
+
+        return { variance: varStr, pctScored: pctVal + '%' };
+    }
+
     function calculateLossPer1k() {
         const txns = parseFloat(document.getElementById('total_transactions').value);
         const tgRl = parseFloat(document.getElementById('total_tg_rl').value);
@@ -707,13 +752,18 @@
 
         const lossInput = document.getElementById('kpi_loss');
         const statusCell = document.getElementById('status_loss');
+        const varCell = document.getElementById('variance_loss');
+        const pctCell = document.getElementById('pct_loss');
 
         if (!isNaN(txns) && txns > 0 && !isNaN(tgRl)) {
-            const lossVal = ((tgRl / txns) * 1000).toFixed(2);
+            const lossVal = parseFloat(((tgRl / txns) * 1000).toFixed(2));
             lossInput.value = lossVal;
 
             if (!isNaN(targetVal)) {
-                let isMet = parseFloat(lossVal) <= targetVal;
+                let isMet = lossVal <= targetVal;
+                let metrics = calculateMetrics(lossVal, targetVal, 'less', 'num');
+                varCell.textContent = metrics.variance;
+                pctCell.textContent = metrics.pctScored;
                 
                 lossInput.classList.remove('met-text', 'not-met-text');
                 statusCell.classList.remove('met-text', 'not-met-text');
@@ -729,12 +779,16 @@
                 }
             } else {
                 statusCell.textContent = '-';
+                varCell.textContent = '-';
+                pctCell.textContent = '-';
                 lossInput.classList.remove('met-text', 'not-met-text');
                 statusCell.classList.remove('met-text', 'not-met-text');
             }
         } else {
             lossInput.value = '';
             statusCell.textContent = '-';
+            varCell.textContent = '-';
+            pctCell.textContent = '-';
             lossInput.classList.remove('met-text', 'not-met-text');
             statusCell.classList.remove('met-text', 'not-met-text');
         }
@@ -749,6 +803,10 @@
         const type = tr.dataset.type;
         const dir = tr.dataset.dir;
         const statusCell = tr.querySelector('.status-cell');
+
+        const kpiName = tr.dataset.kpi.toLowerCase().replace(/[^a-z]/g, '');
+        const varCell = tr.cells[3];
+        const pctCell = tr.cells[4];
 
         let target = parseFloat(tr.dataset.target);
         
@@ -771,12 +829,18 @@
 
         if (isNaN(target)) {
             statusCell.textContent = '-';
+            if (varCell) varCell.textContent = '-';
+            if (pctCell) pctCell.textContent = '-';
             input.classList.remove('met-text', 'not-met-text');
             statusCell.classList.remove('met-text', 'not-met-text');
             return;
         }
 
         let isMet = (dir === 'less') ? (numVal <= target) : (numVal >= target);
+        let metrics = calculateMetrics(numVal, target, dir, type);
+
+        if (varCell) varCell.textContent = metrics.variance;
+        if (pctCell) pctCell.textContent = metrics.pctScored;
 
         input.classList.remove('met-text', 'not-met-text');
         statusCell.classList.remove('met-text', 'not-met-text');
@@ -793,11 +857,11 @@
     }
 
     function formatBulletList(rawText) {
-        if (!rawText.trim()) return '<li style="margin-bottom: 6px;">None</li>';
+        if (!rawText.trim()) return '<li style="margin-bottom: 4px;">None</li>';
         const lines = rawText.split('\n').filter(line => line.trim() !== '');
         return lines.map(line => {
             let cleanLine = line.replace(/^[•\-\*]\s*/, '');
-            return `<li style="margin-bottom: 6px;">${cleanLine}</li>`;
+            return `<li style="margin-bottom: 4px; font-size: 13px;">${cleanLine}</li>`;
         }).join('');
     }
 
@@ -825,16 +889,16 @@
             if (qSelect.value) {
                 discRowsHTML += `
                     <tr>
-                        <td style="padding: 8px 10px; border: 1px solid #777777; vertical-align: middle;"><strong>${cat}</strong></td>
-                        <td style="padding: 8px 10px; border: 1px solid #777777; vertical-align: middle;">${qVal}</td>
-                        <td style="padding: 8px 10px; border: 1px solid #777777; text-align: center; vertical-align: middle;"><strong>${rVal}</strong></td>
+                        <td style="padding: 5px 8px; border: 1px solid #cccccc; vertical-align: middle; font-size: 12px;"><strong>${cat}</strong></td>
+                        <td style="padding: 5px 8px; border: 1px solid #cccccc; vertical-align: middle; font-size: 12px;">${qVal}</td>
+                        <td style="padding: 5px 8px; border: 1px solid #cccccc; text-align: center; vertical-align: middle; font-size: 12px;"><strong>${rVal}</strong></td>
                     </tr>
                 `;
             }
         });
 
         if (!discRowsHTML) {
-            discRowsHTML = `<tr><td colspan="3" style="padding: 10px; border: 1px solid #777777; text-align: center; vertical-align: middle;">No discussion questions selected.</td></tr>`;
+            discRowsHTML = `<tr><td colspan="3" style="padding: 6px; border: 1px solid #cccccc; text-align: center; font-size: 12px;">No discussion questions selected.</td></tr>`;
         }
 
         let kpiRowsHTML = '';
@@ -850,7 +914,10 @@
             const actualInput = tr.cells[2].querySelector('input');
             const inputVal = actualInput ? (actualInput.value || 'N/A') : tr.cells[2].innerText;
 
-            const statusCell = tr.cells[3];
+            const varianceText = tr.cells[3] ? tr.cells[3].textContent : '-';
+            const pctText = tr.cells[4] ? tr.cells[4].textContent : '-';
+
+            const statusCell = tr.cells[5];
             const statusText = statusCell ? statusCell.textContent : '-';
 
             let colorStyle = '#333333';
@@ -859,33 +926,35 @@
 
             kpiRowsHTML += `
                 <tr>
-                    <td style="padding: 8px 12px; border: 2px solid #111111; text-align: left; vertical-align: middle; white-space: nowrap;">${name}</td>
-                    <td style="padding: 8px 12px; border: 2px solid #111111; text-align: center; vertical-align: middle; white-space: nowrap;" align="center" valign="middle">${target}</td>
-                    <td style="padding: 8px 12px; border: 2px solid #111111; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap;" align="center" valign="middle">${inputVal}</td>
-                    <td style="padding: 8px 12px; border: 2px solid #111111; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap;" align="center" valign="middle">${statusText}</td>
+                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: left; vertical-align: middle; white-space: nowrap; font-size: 11px;">${name}</td>
+                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${target}</td>
+                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap; font-size: 11px;">${inputVal}</td>
+                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${varianceText}</td>
+                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${pctText}</td>
+                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap; font-size: 11px;">${statusText}</td>
                 </tr>
             `;
         });
 
         const emailHTML = `
-            <div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #333333; max-width: 650px;">
-                <p style="margin: 0 0 16px 0; font-size: 16px;">Hi <strong>${firstName}</strong>,</p>
-                <p style="margin: 0 0 16px 0;">Please find below the performance summary from our 1-on-1 discussion for <strong>${month} ${year}</strong>.</p>
+            <div style="font-family: Arial, sans-serif; font-size: 13px; line-height: 1.5; color: #333333; max-width: 620px;">
+                <p style="margin: 0 0 12px 0; font-size: 14px;">Hi <strong>${firstName}</strong>,</p>
+                <p style="margin: 0 0 14px 0; font-size: 13px;">Please find below the performance summary from our 1-on-1 discussion for <strong>${month} ${year}</strong>.</p>
                 
-                <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin: 24px 0 12px 0;">Monthly 1-on-1 Summary</h3>
+                <h4 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 4px; margin: 18px 0 10px 0; font-size: 14px;">Monthly 1-on-1 Summary</h4>
                 
-                <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
-                    <tr><td style="padding: 4px 0; font-size: 15px;"><strong>Agent Name:</strong> ${fullName}</td><td style="padding: 4px 0; font-size: 15px;"><strong>LOB:</strong> ${lob}</td></tr>
-                    <tr><td style="padding: 4px 0; font-size: 15px;"><strong>Month:</strong> ${month} ${year}</td><td style="padding: 4px 0; font-size: 15px;"><strong>Date:</strong> ${date}</td></tr>
+                <table style="width: 100%; margin-bottom: 15px; border-collapse: collapse; font-size: 12px;">
+                    <tr><td style="padding: 2px 0;"><strong>Agent Name:</strong> ${fullName}</td><td style="padding: 2px 0;"><strong>LOB:</strong> ${lob}</td></tr>
+                    <tr><td style="padding: 2px 0;"><strong>Month:</strong> ${month} ${year}</td><td style="padding: 2px 0;"><strong>Date:</strong> ${date}</td></tr>
                 </table>
 
-                <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">1-on-1 Discussion Topics & Ratings</h3>
-                <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border: 1px solid #777777; margin-bottom: 20px;">
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">1-on-1 Discussion Topics & Ratings</h4>
+                <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border: 1px solid #cccccc; margin-bottom: 15px;">
                     <thead style="background-color: #f2f2f2;">
                         <tr>
-                            <th style="width: 25%; padding: 8px 10px; border: 1px solid #777777; vertical-align: middle;">Category</th>
-                            <th style="width: 60%; padding: 8px 10px; border: 1px solid #777777; vertical-align: middle;">Discussion Question</th>
-                            <th style="width: 15%; padding: 8px 10px; border: 1px solid #777777; text-align: center; vertical-align: middle;">Rating</th>
+                            <th style="width: 25%; padding: 5px 8px; border: 1px solid #cccccc; font-size: 11px;">Category</th>
+                            <th style="width: 60%; padding: 5px 8px; border: 1px solid #cccccc; font-size: 11px;">Discussion Question</th>
+                            <th style="width: 15%; padding: 5px 8px; border: 1px solid #cccccc; text-align: center; font-size: 11px;">Rating</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -893,19 +962,21 @@
                     </tbody>
                 </table>
 
-                <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">Voice of Agent (VOA)</h3>
-                <ul style="padding-left: 20px; margin: 0 0 20px 0;">
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Voice of Agent (VOA)</h4>
+                <ul style="padding-left: 18px; margin: 0 0 15px 0;">
                     ${formatBulletList(voaText)}
                 </ul>
 
-                <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">KPI Performance Summary</h3>
-                <table border="2" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: auto; min-width: 100%; border: 2px solid #111111; margin-bottom: 20px;">
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">KPI Performance Summary</h4>
+                <table border="1" cellpadding="4" cellspacing="0" style="border-collapse: collapse; width: 100%; border: 1px solid #b0b0b0; margin-bottom: 15px;">
                     <thead style="background-color: #e2e8f0;">
                         <tr>
-                            <th style="padding: 8px 12px; border: 2px solid #111111; color: #111111; text-align: left; vertical-align: middle; white-space: nowrap;">Metric</th>
-                            <th style="padding: 8px 12px; border: 2px solid #111111; color: #111111; text-align: center; vertical-align: middle; white-space: nowrap;" align="center" valign="middle">Target</th>
-                            <th style="padding: 8px 12px; border: 2px solid #111111; color: #111111; text-align: center; vertical-align: middle; white-space: nowrap;" align="center" valign="middle">Actual Score</th>
-                            <th style="padding: 8px 12px; border: 2px solid #111111; color: #111111; text-align: center; vertical-align: middle; white-space: nowrap;" align="center" valign="middle">Status</th>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: left; font-size: 11px;">Metric</th>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: center; font-size: 11px;">Target</th>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: center; font-size: 11px;">Actual</th>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: center; font-size: 11px;">Variance</th>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: center; font-size: 11px;">% Scored</th>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: center; font-size: 11px;">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -913,13 +984,13 @@
                     </tbody>
                 </table>
 
-                <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">Observations</h3>
-                <ul style="padding-left: 20px; margin: 0 0 20px 0;">
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Observations</h4>
+                <ul style="padding-left: 18px; margin: 0 0 15px 0;">
                     ${formatBulletList(document.getElementById('observations').value)}
                 </ul>
 
-                <h3 style="color: #2c3e50; margin: 24px 0 12px 0;">Feedback & Appreciation</h3>
-                <ul style="padding-left: 20px; margin: 0 0 20px 0;">
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Feedback & Appreciation</h4>
+                <ul style="padding-left: 18px; margin: 0 0 15px 0;">
                     ${formatBulletList(document.getElementById('feedback').value)}
                 </ul>
             </div>
