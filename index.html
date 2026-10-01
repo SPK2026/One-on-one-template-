@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monthly 1-on-1 Performance Form with Advanced AI Enhancer</title>
+    <!-- Included html2canvas for capturing DOM elements as images -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -240,6 +242,7 @@
             gap: 10px;
             margin-top: 25px;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
         button {
@@ -268,6 +271,15 @@
 
         .btn-secondary:hover {
             background-color: #c0392b;
+        }
+
+        .btn-image {
+            background-color: #8e44ad;
+            color: white;
+        }
+
+        .btn-image:hover {
+            background-color: #732d91;
         }
 
         .subject-box {
@@ -639,12 +651,13 @@
             <button type="button" class="btn-primary" style="font-size: 0.85rem; padding: 6px 12px; white-space: nowrap;" onclick="copySubjectLine()">📋 Copy Subject Line</button>
         </div>
 
-        <p>Click the button below to copy the body, then paste (Ctrl+V) directly into your email body in Outlook.</p>
+        <p>Click the buttons below to copy either as HTML text or as an exact visual image to paste directly into Outlook/Slack/Teams.</p>
         
         <div id="emailContent"></div>
 
         <div class="btn-container">
             <button type="button" class="btn-primary" onclick="copyToClipboard()">📋 Copy Email Body Format</button>
+            <button type="button" class="btn-image" onclick="copyEmailAsImage()">📷 Copy Email as Image</button>
         </div>
     </div>
 </div>
@@ -1181,6 +1194,41 @@
             alert('Failed to copy. Please manually select and copy the text.');
         }
         window.getSelection().removeAllRanges();
+    }
+
+    async function copyEmailAsImage() {
+        const emailDiv = document.getElementById('emailContent');
+        if (!emailDiv) return;
+
+        try {
+            const canvas = await html2canvas(emailDiv, {
+                backgroundColor: '#ffffff',
+                scale: 2, // High resolution capture
+                logging: false,
+                useCORS: true
+            });
+
+            canvas.toBlob(async (blob) => {
+                if (!blob) {
+                    alert('Failed to generate image block.');
+                    return;
+                }
+                try {
+                    const data = [new ClipboardItem({ [blob.type]: blob })];
+                    await navigator.clipboard.write(data);
+                    alert('Email image copied to clipboard! You can paste (Ctrl+V) it directly into Outlook, Teams, or Slack.');
+                } catch (err) {
+                    // Fallback to downloading image if direct clipboard image write is not supported by browser security
+                    const link = document.createElement('a');
+                    link.download = '1-on-1-Performance-Summary.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    alert('Image copy was blocked by browser permissions, so the PNG file has been downloaded to your computer instead.');
+                }
+            }, 'image/png');
+        } catch (err) {
+            alert('An error occurred while converting the section to an image: ' + err.message);
+        }
     }
 
     function clearForm() {
