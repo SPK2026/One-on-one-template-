@@ -167,6 +167,50 @@
             font-weight: bold;
         }
 
+        /* Custom KPI Control Panel */
+        .add-kpi-panel {
+            background: #f0f4f8;
+            border: 1px dashed var(--accent-color);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .add-kpi-panel input, .add-kpi-panel select {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+        }
+
+        .btn-add-kpi {
+            background-color: #27ae60;
+            color: white;
+            font-size: 0.85rem;
+            padding: 7px 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-add-kpi:hover {
+            background-color: #219653;
+        }
+
+        .btn-delete-row {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
         .bullet-input {
             width: 100%;
             height: 110px;
@@ -338,6 +382,10 @@
                     <option value="">Select LOB</option>
                     <option value="FL Chat">FL Chat</option>
                     <option value="FL Voice">FL Voice</option>
+                    <option value="FL Queues">FL Queues</option>
+                    <option value="SC Chat">SC Chat</option>
+                    <option value="SC Voice">SC Voice</option>
+                    <option value="SC Queues">SC Queues</option>
                 </select>
             </div>
         </div>
@@ -480,6 +528,22 @@
             <span id="scorecardDisplay" class="scorecard-val">0 / 0 Met (0%)</span>
         </div>
 
+        <!-- Add Custom KPI Panel -->
+        <div class="add-kpi-panel">
+            <strong>➕ Add Custom KPI:</strong>
+            <input type="text" id="new_kpi_name" placeholder="KPI Name (e.g. FCR)" style="flex: 1; min-width: 150px;">
+            <select id="new_kpi_format">
+                <option value="pct">Percentage (%)</option>
+                <option value="num">Number</option>
+                <option value="secs">Seconds (secs)</option>
+            </select>
+            <select id="new_kpi_dir">
+                <option value="more">Higher the better (≥ Target)</option>
+                <option value="less">Lower the better (≤ Target)</option>
+            </select>
+            <button type="button" class="btn-add-kpi" onclick="addCustomKPI()">+ Add KPI</button>
+        </div>
+
         <table class="kpi-table" id="kpiTable">
             <thead>
                 <tr>
@@ -532,9 +596,9 @@
                     <td id="pct_transfers">-</td>
                     <td id="status_transfers" class="status-cell">-</td>
                 </tr>
-                <tr data-kpi="Support Placement" data-type="pct" data-target="5" data-dir="less">
+                <tr data-kpi="Support Placement" data-type="pct" data-target="4.50" data-dir="less">
                     <td style="text-align: left;">Support Placement (%)</td>
-                    <td>&lt; 4.5%</td>
+                    <td>&lt; 4.50%</td>
                     <td><input type="text" id="kpi_support" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 4.1"></td>
                     <td id="variance_support">-</td>
                     <td id="pct_support">-</td>
@@ -663,6 +727,8 @@
 </div>
 
 <script>
+    let customKpiCounter = 0;
+
     window.onload = function() {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('oneOnOneDate').value = today;
@@ -673,6 +739,59 @@
         document.getElementById('yearInput').value = dateObj.getFullYear();
         updateScorecard();
     };
+
+    /* Add Custom KPI Row */
+    function addCustomKPI() {
+        const nameInput = document.getElementById('new_kpi_name');
+        const kpiName = nameInput.value.trim();
+        const format = document.getElementById('new_kpi_format').value;
+        const dir = document.getElementById('new_kpi_dir').value;
+
+        if (!kpiName) {
+            alert("Please enter a name for the custom KPI.");
+            return;
+        }
+
+        customKpiCounter++;
+        const rowId = `custom_kpi_${customKpiCounter}`;
+        const targetId = `target_custom_${customKpiCounter}`;
+        const actualId = `kpi_custom_${customKpiCounter}`;
+
+        const tbody = document.querySelector('#kpiTable tbody');
+        const tr = document.createElement('tr');
+        tr.id = rowId;
+        tr.dataset.kpi = kpiName;
+        tr.dataset.type = format;
+        tr.dataset.dir = dir;
+        tr.classList.add('custom-kpi-row');
+
+        let targetPlaceholder = 'Enter Target';
+        if (format === 'pct') targetPlaceholder = 'Target %';
+        if (format === 'secs') targetPlaceholder = 'Secs';
+
+        tr.innerHTML = `
+            <td style="text-align: left;">
+                <button type="button" class="btn-delete-row" onclick="removeCustomKPI('${rowId}')" title="Delete KPI">✕</button>
+                ${kpiName} ${format === 'pct' ? '(%)' : (format === 'secs' ? '(secs)' : '')}
+            </td>
+            <td><input type="text" id="${targetId}" onblur="formatTargetField(this, '${format}')" oninput="processKPI(document.getElementById('${actualId}'))" placeholder="${targetPlaceholder}"></td>
+            <td><input type="text" id="${actualId}" class="kpi-input" onblur="processKPI(this)" placeholder="Actual"></td>
+            <td>-</td>
+            <td>-</td>
+            <td class="status-cell">-</td>
+        `;
+
+        tbody.appendChild(tr);
+        nameInput.value = '';
+    }
+
+    function removeCustomKPI(rowId) {
+        const tr = document.getElementById(rowId);
+        if (tr) {
+            tr.remove();
+            updateScorecard();
+        }
+    }
 
     /* Scorecard Calculation */
     function updateScorecard() {
@@ -721,7 +840,7 @@
             const cells = tr.cells;
             if (cells.length < 6) return;
 
-            const metricName = cells[0].innerText.trim();
+            const metricName = cells[0].innerText.replace('✕', '').trim();
             
             let targetText = cells[1].innerText.trim();
             const targetInput = cells[1].querySelector('input');
@@ -738,7 +857,7 @@
 
             if (actualText && actualText !== '-' && actualText !== 'N/A' && targetText && targetText !== '-') {
                 let comparison = statusText === 'NOT MET' ? 'higher than' : 'within / beating';
-                if (metricName.toLowerCase().includes('csat') || metricName.toLowerCase().includes('quality') || metricName.toLowerCase().includes('productivity')) {
+                if (tr.dataset.dir === 'more' || metricName.toLowerCase().includes('csat') || metricName.toLowerCase().includes('quality') || metricName.toLowerCase().includes('productivity')) {
                     comparison = statusText === 'NOT MET' ? 'lower than' : 'meeting / exceeding';
                 }
 
@@ -965,6 +1084,11 @@
             target = parseFloat(document.getElementById('target_shrinkage').value);
         } else if (tr.id === 'row_productivity') {
             target = parseFloat(document.getElementById('target_productivity').value);
+        } else if (tr.classList.contains('custom-kpi-row')) {
+            const targetInput = tr.cells[1].querySelector('input');
+            if (targetInput) {
+                target = parseFloat(targetInput.value.replace(/[^\d.]/g, ''));
+            }
         }
 
         let numVal = parseFloat(val.replace(/[^\d.]/g, ''));
@@ -973,7 +1097,7 @@
         if (type === 'pct') {
             input.value = numVal + '%';
         } else {
-            input.value = numVal + (type === 'num' && tr.dataset.kpi === 'AHT' ? ' secs' : '');
+            input.value = numVal + (type === 'secs' || tr.dataset.kpi === 'AHT' ? ' secs' : '');
         }
 
         if (isNaN(target)) {
@@ -1012,15 +1136,13 @@
     function formatBulletList(rawText) {
         if (!rawText || !rawText.trim()) return '<li style="margin-bottom: 4px; font-size: 13px;">None</li>';
         
-        // Split by new line
         const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         
         if (lines.length === 0) return '<li style="margin-bottom: 4px; font-size: 13px;">None</li>';
 
         return lines.map(line => {
-            // Strip any existing leading bullet symbol (•, -, *, or numbered lists like 1.) to avoid double bulleting
             let cleanLine = line.replace(/^[•\-\*]\s*/, '').replace(/^\d+[\.\)]\s*/, '').trim();
-            if (!cleanLine) cleanLine = line; // Fallback if line was only a symbol
+            if (!cleanLine) cleanLine = line;
             return `<li style="margin-bottom: 4px; font-size: 13px;">${cleanLine}</li>`;
         }).join('');
     }
@@ -1067,7 +1189,7 @@
 
         let kpiRowsHTML = '';
         document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
-            const name = tr.cells[0].innerText;
+            const name = tr.cells[0].innerText.replace('✕', '').trim();
             
             let target = tr.cells[1].innerText;
             const targetInput = tr.cells[1].querySelector('input');
@@ -1133,7 +1255,6 @@
 
                 <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">KPI Performance Summary</h4>
                 
-                <!-- Email Scorecard Summary Line -->
                 <div style="background: #f8f9fa; border: 1px solid #cccccc; padding: 8px 12px; margin-bottom: 10px; font-size: 13px; border-left: 4px solid ${scorecardData.colorCode};">
                     <strong>Overall KPI Score:</strong> <span style="color: ${scorecardData.colorCode}; font-weight: bold;">${scorecardData.metKPIs} / ${scorecardData.totalKPIs} Met (${scorecardData.pctVal}%)</span>
                 </div>
@@ -1203,7 +1324,7 @@
         try {
             const canvas = await html2canvas(emailDiv, {
                 backgroundColor: '#ffffff',
-                scale: 2, // High resolution capture
+                scale: 2,
                 logging: false,
                 useCORS: true
             });
@@ -1218,7 +1339,6 @@
                     await navigator.clipboard.write(data);
                     alert('Email image copied to clipboard! You can paste (Ctrl+V) it directly into Outlook, Teams, or Slack.');
                 } catch (err) {
-                    // Fallback to downloading image if direct clipboard image write is not supported by browser security
                     const link = document.createElement('a');
                     link.download = '1-on-1-Performance-Summary.png';
                     link.href = canvas.toDataURL('image/png');
@@ -1234,6 +1354,7 @@
     function clearForm() {
         if (confirm("Are you sure you want to clear all fields?")) {
             document.getElementById('oneOnOneForm').reset();
+            document.querySelectorAll('.custom-kpi-row').forEach(r => r.remove());
             document.querySelectorAll('.status-cell').forEach(el => {
                 el.textContent = '-';
                 el.className = 'status-cell';
