@@ -663,36 +663,53 @@
             </tbody>
         </table>
 
-        <!-- Qualitative Observations & Feedback -->
-        <div class="section-title">Qualitative Observations & Feedback</div>
+        <!-- Performance Highlights & Lowlights (Automated) -->
+        <div class="section-title">Performance Highlights & Lowlights (Automated from KPIs)</div>
 
         <div class="form-group" style="margin-bottom: 20px;">
-            <label for="observations">Observations</label>
-            <textarea id="observations" class="bullet-input" spellcheck="true" placeholder="Enter observations or click below to auto-generate from KPI entries..."></textarea>
+            <label for="highlights">Highlights (Met KPIs)</label>
+            <textarea id="highlights" class="bullet-input" spellcheck="true" placeholder="Auto-generated from KPIs marked as MET..."></textarea>
             <div class="ai-toolbar">
-                <button type="button" class="btn-summary" onclick="generateKPIObservationSummary()">📊 Auto-Generate KPI Summary Line</button>
-                <span style="border-left: 1px solid #ccc; height: 18px; margin: 0 4px;"></span>
-                <label>✨ AI Options:</label>
-                <select id="obs_style" class="ai-select">
-                    <option value="formal">Formal & Professional Bullets</option>
-                    <option value="executive">Executive Summary</option>
-                    <option value="constructive">Constructive Feedback Tone</option>
-                </select>
-                <button type="button" class="btn-ai" onclick="enhanceText('observations', 'obs_style')">🪄 Enhance Grammar & Paraphrase</button>
+                <button type="button" class="btn-summary" onclick="generateAutomatedKPILists()">🔄 Refresh Highlights & Lowlights</button>
             </div>
         </div>
 
         <div class="form-group" style="margin-bottom: 20px;">
-            <label for="feedback">Feedback / Appreciation (Enter each bullet on a new line)</label>
-            <textarea id="feedback" class="bullet-input" spellcheck="true" placeholder="• Great leadership shown during peak operational hours&#10;• Appreciated for proactive team support and quick resolution"></textarea>
+            <label for="lowlights">Lowlights (Missed KPIs)</label>
+            <textarea id="lowlights" class="bullet-input" spellcheck="true" placeholder="Auto-generated from KPIs marked as NOT MET..."></textarea>
+            <div class="ai-toolbar">
+                <button type="button" class="btn-summary" onclick="generateAutomatedKPILists()">🔄 Refresh Highlights & Lowlights</button>
+            </div>
+        </div>
+
+        <!-- Way Forward & Action Plan -->
+        <div class="section-title">Way Forward & Action Plan</div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="wayForward">Way Forward Notes</label>
+            <textarea id="wayForward" class="bullet-input" spellcheck="true" placeholder="• Focus areas for upcoming month&#10;• Operational alignments and skill development objectives"></textarea>
             <div class="ai-toolbar">
                 <label>✨ AI Enhancer Options:</label>
-                <select id="fb_style" class="ai-select">
-                    <option value="formal">Formal Professional Appreciation</option>
-                    <option value="executive">Executive Summary</option>
+                <select id="wf_style" class="ai-select">
+                    <option value="formal">Formal & Professional Bullets</option>
+                    <option value="executive">Executive Paragraph</option>
                     <option value="constructive">Constructive Guidance</option>
                 </select>
-                <button type="button" class="btn-ai" onclick="enhanceText('feedback', 'fb_style')">🪄 Enhance Grammar & Paraphrase</button>
+                <button type="button" class="btn-ai" onclick="enhanceText('wayForward', 'wf_style')">🪄 Enhance Grammar & Paraphrase</button>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="actionPlan">Action Plan & Timeline Notes</label>
+            <textarea id="actionPlan" class="bullet-input" spellcheck="true" placeholder="• Specific action item - Owner / Target Date&#10;• Weekly check-in schedule for milestone reviews"></textarea>
+            <div class="ai-toolbar">
+                <label>✨ AI Enhancer Options:</label>
+                <select id="ap_style" class="ai-select">
+                    <option value="formal">Formal Structured Plan</option>
+                    <option value="executive">Executive Summary</option>
+                    <option value="constructive">Constructive Target Plan</option>
+                </select>
+                <button type="button" class="btn-ai" onclick="enhanceText('actionPlan', 'ap_style')">🪄 Enhance Grammar & Paraphrase</button>
             </div>
         </div>
 
@@ -790,6 +807,7 @@
         if (tr) {
             tr.remove();
             updateScorecard();
+            generateAutomatedKPILists();
         }
     }
 
@@ -832,9 +850,10 @@
         return { metKPIs, totalKPIs, pctVal, colorCode };
     }
 
-    /* Auto-Generate KPI Observation Summary */
-    function generateKPIObservationSummary() {
-        let generatedBullets = [];
+    /* Auto-Generate Highlights (MET) & Lowlights (NOT MET) */
+    function generateAutomatedKPILists() {
+        let metBullets = [];
+        let notMetBullets = [];
 
         document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
             const cells = tr.cells;
@@ -856,32 +875,18 @@
             const statusText = cells[5].textContent.trim();
 
             if (actualText && actualText !== '-' && actualText !== 'N/A' && targetText && targetText !== '-') {
-                let comparison = statusText === 'NOT MET' ? 'higher than' : 'within / beating';
-                if (tr.dataset.dir === 'more' || metricName.toLowerCase().includes('csat') || metricName.toLowerCase().includes('quality') || metricName.toLowerCase().includes('productivity')) {
-                    comparison = statusText === 'NOT MET' ? 'lower than' : 'meeting / exceeding';
+                if (statusText === 'MET') {
+                    let line = `• ${metricName}: Achieved ${actualText} against target of ${targetText} (Variance: ${varianceText}, Scored: ${pctText}).`;
+                    metBullets.push(line);
+                } else if (statusText === 'NOT MET') {
+                    let line = `• ${metricName}: Missed target of ${targetText} with actual performance at ${actualText} (Variance: ${varianceText}, Scored: ${pctText}).`;
+                    notMetBullets.push(line);
                 }
-
-                let line = `• ${metricName} is ${comparison} target: against the ${targetText} target, performance was ${actualText} (Variance: ${varianceText}, Scored: ${pctText}).`;
-                generatedBullets.push(line);
             }
         });
 
-        if (generatedBullets.length === 0) {
-            alert('Please fill in KPI Targets and Actual Scores first to auto-generate the summary.');
-            return;
-        }
-
-        const obsField = document.getElementById('observations');
-        let currentText = obsField.value.trim();
-        let newSummary = generatedBullets.join('\n');
-
-        if (currentText) {
-            obsField.value = currentText + '\n' + newSummary;
-        } else {
-            obsField.value = newSummary;
-        }
-
-        alert('KPI Observation Summary auto-generated into the Observations field!');
+        document.getElementById('highlights').value = metBullets.length > 0 ? metBullets.join('\n') : '• None';
+        document.getElementById('lowlights').value = notMetBullets.length > 0 ? notMetBullets.join('\n') : '• None';
     }
 
     /* AI Grammar & Paraphrase Enhancer */
@@ -1061,6 +1066,7 @@
         }
 
         updateScorecard();
+        generateAutomatedKPILists();
     }
 
     function processKPI(input) {
@@ -1107,6 +1113,7 @@
             input.classList.remove('met-text', 'not-met-text');
             statusCell.classList.remove('met-text', 'not-met-text');
             updateScorecard();
+            generateAutomatedKPILists();
             return;
         }
 
@@ -1130,6 +1137,7 @@
         }
 
         updateScorecard();
+        generateAutomatedKPILists();
     }
 
     /* Fixed Bullet Formatting for HTML Email Preview */
@@ -1148,6 +1156,8 @@
     }
 
     function generateEmailPreview() {
+        generateAutomatedKPILists();
+
         const fullName = document.getElementById('employeeName').value.trim() || 'Employee';
         const firstName = fullName.split(' ')[0];
         const lob = document.getElementById('lob').value || 'N/A';
@@ -1155,8 +1165,10 @@
         const year = document.getElementById('yearInput').value || 'Year';
         const date = document.getElementById('oneOnOneDate').value;
         const voeText = document.getElementById('voe').value || '';
-        const obsText = document.getElementById('observations').value || '';
-        const fbText = document.getElementById('feedback').value || '';
+        const highlightsText = document.getElementById('highlights').value || '';
+        const lowlightsText = document.getElementById('lowlights').value || '';
+        const wayForwardText = document.getElementById('wayForward').value || '';
+        const actionPlanText = document.getElementById('actionPlan').value || '';
 
         const scorecardData = updateScorecard();
 
@@ -1275,14 +1287,24 @@
                     </tbody>
                 </table>
 
-                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Observations</h4>
+                <h4 style="color: #27ae60; margin: 18px 0 8px 0; font-size: 14px;">Highlights (Met KPIs)</h4>
                 <ul style="padding-left: 18px; margin: 0 0 15px 0;">
-                    ${formatBulletList(obsText)}
+                    ${formatBulletList(highlightsText)}
                 </ul>
 
-                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Feedback & Appreciation</h4>
+                <h4 style="color: #c0392b; margin: 18px 0 8px 0; font-size: 14px;">Lowlights (Missed KPIs)</h4>
                 <ul style="padding-left: 18px; margin: 0 0 15px 0;">
-                    ${formatBulletList(fbText)}
+                    ${formatBulletList(lowlightsText)}
+                </ul>
+
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Way Forward</h4>
+                <ul style="padding-left: 18px; margin: 0 0 15px 0;">
+                    ${formatBulletList(wayForwardText)}
+                </ul>
+
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Action Plan & Timeline</h4>
+                <ul style="padding-left: 18px; margin: 0 0 15px 0;">
+                    ${formatBulletList(actionPlanText)}
                 </ul>
             </div>
         `;
