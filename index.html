@@ -406,7 +406,7 @@
                 <input type="number" id="yearInput" required min="2020" max="2099">
             </div>
             <div class="form-group">
-                <label for="oneOnOneDate">1-on-1 Date</label>
+                <label for="oneOnOneDate">1-on-1 Date *</label>
                 <input type="date" id="oneOnOneDate" required>
             </div>
         </div>
@@ -433,22 +433,22 @@
             <thead>
                 <tr>
                     <th style="width: 20%;">Type</th>
-                    <th style="width: 65%;">Select Question</th>
-                    <th style="width: 15%;">Rating (1-4)</th>
+                    <th style="width: 65%;">Select Question *</th>
+                    <th style="width: 15%;">Rating (1-4) *</th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="disc-row" data-category="Engagement & Well-being">
                     <td><strong>Engagement & Well-being</strong></td>
                     <td>
-                        <select class="q-select" style="width: 100%;">
-                            <option value="">-- Select Question --</option>
+                        <select class="q-select" style="width: 100%;" required>
+                            <option value="">-- Select Question * --</option>
                             <option value="Q1: How are you feeling about work overall this week/month — motivated, stressed, or somewhere in between?">Q1: How are you feeling about work overall this week/month — motivated, stressed, or somewhere in between?</option>
                         </select>
                     </td>
                     <td>
-                        <select class="q-rating" style="width: 100%;">
-                            <option value="">Rate</option>
+                        <select class="q-rating" style="width: 100%;" required>
+                            <option value="">Rate *</option>
                             <option value="1">1 (Lowest)</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -459,15 +459,15 @@
                 <tr class="disc-row" data-category="Support">
                     <td><strong>Support</strong></td>
                     <td>
-                        <select class="q-select" style="width: 100%;">
-                            <option value="">-- Select Question --</option>
+                        <select class="q-select" style="width: 100%;" required>
+                            <option value="">-- Select Question * --</option>
                             <option value="Q1: Do you feel you had the right information and support to do your job effectively?">Q1: Do you feel you had the right information and support to do your job effectively?</option>
                             <option value="Q2: Is there anything blocking your performance right now that we should address?">Q2: Is there anything blocking your performance right now that we should address?</option>
                         </select>
                     </td>
                     <td>
-                        <select class="q-rating" style="width: 100%;">
-                            <option value="">Rate</option>
+                        <select class="q-rating" style="width: 100%;" required>
+                            <option value="">Rate *</option>
                             <option value="1">1 (Lowest)</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -478,8 +478,8 @@
                 <tr class="disc-row" data-category="Learning">
                     <td><strong>Learning</strong></td>
                     <td>
-                        <select class="q-select" style="width: 100%;">
-                            <option value="">-- Select Question --</option>
+                        <select class="q-select" style="width: 100%;" required>
+                            <option value="">-- Select Question * --</option>
                             <option value="Q1: What went well in your interactions this month? Any tasks or projects you're particularly proud of?">Q1: What went well in your interactions this month? Any tasks or projects you're particularly proud of?</option>
                             <option value="Q2: Any challenges you faced while managing operations or interactions?">Q2: Any challenges you faced while managing operations or interactions?</option>
                             <option value="Q3: Were there any escalations or difficult conversations you'd like feedback on?">Q3: Were there any escalations or difficult conversations you'd like feedback on?</option>
@@ -488,8 +488,8 @@
                         </select>
                     </td>
                     <td>
-                        <select class="q-rating" style="width: 100%;">
-                            <option value="">Rate</option>
+                        <select class="q-rating" style="width: 100%;" required>
+                            <option value="">Rate *</option>
                             <option value="1">1 (Lowest)</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -500,16 +500,16 @@
                 <tr class="disc-row" data-category="Aspirations & Growth">
                     <td><strong>Aspirations & Growth</strong></td>
                     <td>
-                        <select class="q-select" style="width: 100%;">
-                            <option value="">-- Select Question --</option>
+                        <select class="q-select" style="width: 100%;" required>
+                            <option value="">-- Select Question * --</option>
                             <option value="Q1: What skill or area would you like to improve over the next month?">Q1: What skill or area would you like to improve over the next month?</option>
                             <option value="Q2: Do you have clear understanding of team operational priorities and goals?">Q2: Do you have clear understanding of team operational priorities and goals?</option>
                             <option value="Q3: Where do you see yourself growing in the team over the next 3–6 months?">Q3: Where do you see yourself growing in the team over the next 3–6 months?</option>
                         </select>
                     </td>
                     <td>
-                        <select class="q-rating" style="width: 100%;">
-                            <option value="">Rate</option>
+                        <select class="q-rating" style="width: 100%;" required>
+                            <option value="">Rate *</option>
                             <option value="1">1 (Lowest)</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -522,8 +522,8 @@
 
         <!-- Voice of Employee Text Area -->
         <div class="form-group" style="margin-bottom: 20px;">
-            <label for="voe">Voice of Employee (VOE)</label>
-            <textarea id="voe" class="bullet-input" spellcheck="true" placeholder="Enter feedback, thoughts, or discussion notes..."></textarea>
+            <label for="voe">Voice of Employee (VOE) *</label>
+            <textarea id="voe" class="bullet-input" required spellcheck="true" placeholder="Enter feedback, thoughts, or discussion notes..."></textarea>
             <div class="ai-toolbar">
                 <label>✨ AI Enhancer Options:</label>
                 <select id="voe_style" class="ai-select">
@@ -536,7 +536,7 @@
         </div>
 
         <!-- KPI Performance Summary -->
-        <div class="section-title">KPI Performance Summary</div>
+        <div class="section-title">KPI Performance Summary (Optional - Fill applicable metrics)</div>
 
         <!-- KPI Scorecard Banner -->
         <div class="scorecard-box">
@@ -679,22 +679,22 @@
             </tbody>
         </table>
 
-        <!-- Performance Highlights & Lowlights (Automated) -->
-        <div class="section-title">Performance Highlights & Lowlights (Automated from KPIs)</div>
+        <!-- Performance Highlights & Lowlights -->
+        <div class="section-title">Performance Highlights & Lowlights</div>
 
         <div class="form-group" style="margin-bottom: 20px;">
-            <label for="highlights">Highlights (Met KPIs)</label>
-            <textarea id="highlights" class="bullet-input" spellcheck="true" placeholder="Auto-generated from KPIs marked as MET..."></textarea>
+            <label for="highlights">Highlights (Met KPIs or positive observations) *</label>
+            <textarea id="highlights" class="bullet-input" required spellcheck="true" placeholder="Enter performance highlights..."></textarea>
             <div class="ai-toolbar">
-                <button type="button" class="btn-summary" onclick="generateAutomatedKPILists()">🔄 Refresh Highlights & Lowlights</button>
+                <button type="button" class="btn-summary" onclick="generateAutomatedKPILists()">🔄 Auto-fill from Met KPIs</button>
             </div>
         </div>
 
         <div class="form-group" style="margin-bottom: 20px;">
-            <label for="lowlights">Lowlights (Missed KPIs)</label>
-            <textarea id="lowlights" class="bullet-input" spellcheck="true" placeholder="Auto-generated from KPIs marked as NOT MET..."></textarea>
+            <label for="lowlights">Lowlights (Missed KPIs or areas for improvement) *</label>
+            <textarea id="lowlights" class="bullet-input" required spellcheck="true" placeholder="Enter performance lowlights..."></textarea>
             <div class="ai-toolbar">
-                <button type="button" class="btn-summary" onclick="generateAutomatedKPILists()">🔄 Refresh Highlights & Lowlights</button>
+                <button type="button" class="btn-summary" onclick="generateAutomatedKPILists()">🔄 Auto-fill from Missed KPIs</button>
             </div>
         </div>
 
@@ -702,8 +702,8 @@
         <div class="section-title">Way Forward & Action Plan</div>
 
         <div class="form-group" style="margin-bottom: 20px;">
-            <label for="wayForward">Way Forward Notes</label>
-            <textarea id="wayForward" class="bullet-input" spellcheck="true" placeholder="• Focus areas for upcoming month&#10;• Operational alignments and skill development objectives"></textarea>
+            <label for="wayForward">Way Forward Notes *</label>
+            <textarea id="wayForward" class="bullet-input" required spellcheck="true" placeholder="• Focus areas for upcoming month&#10;• Operational alignments and skill development objectives"></textarea>
             <div class="ai-toolbar">
                 <label>✨ AI Enhancer Options:</label>
                 <select id="wf_style" class="ai-select">
@@ -716,8 +716,8 @@
         </div>
 
         <div class="form-group" style="margin-bottom: 20px;">
-            <label for="actionPlan">Action Plan & Timeline Notes</label>
-            <textarea id="actionPlan" class="bullet-input" spellcheck="true" placeholder="• Specific action item - Owner / Target Date&#10;• Weekly check-in schedule for milestone reviews"></textarea>
+            <label for="actionPlan">Action Plan & Timeline Notes *</label>
+            <textarea id="actionPlan" class="bullet-input" required spellcheck="true" placeholder="• Specific action item - Owner / Target Date&#10;• Weekly check-in schedule for milestone reviews"></textarea>
             <div class="ai-toolbar">
                 <label>✨ AI Enhancer Options:</label>
                 <select id="ap_style" class="ai-select">
@@ -732,7 +732,7 @@
         <!-- Buttons -->
         <div class="btn-container">
             <button type="button" class="btn-secondary" onclick="clearForm()">Clear Everything</button>
-            <button type="button" class="btn-primary" onclick="generateEmailPreview()">Generate Email Summary</button>
+            <button type="button" class="btn-primary" onclick="validateAndGenerateSummary()">Generate Email Summary</button>
         </div>
     </form>
 
@@ -940,8 +940,42 @@
             }
         });
 
-        document.getElementById('highlights').value = metBullets.length > 0 ? metBullets.join('\n') : '• None';
-        document.getElementById('lowlights').value = notMetBullets.length > 0 ? notMetBullets.join('\n') : '• None';
+        if (metBullets.length > 0) {
+            document.getElementById('highlights').value = metBullets.join('\n');
+        }
+        if (notMetBullets.length > 0) {
+            document.getElementById('lowlights').value = notMetBullets.join('\n');
+        }
+    }
+
+    /* Validation Logic */
+    function validateAndGenerateSummary() {
+        const form = document.getElementById('oneOnOneForm');
+        let isValid = true;
+        let firstInvalidInput = null;
+
+        const mandatoryInputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+
+        mandatoryInputs.forEach(input => {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.style.borderColor = '#e74c3c';
+                if (!firstInvalidInput) firstInvalidInput = input;
+            } else {
+                input.style.borderColor = '#dcdfe6';
+            }
+        });
+
+        if (!isValid) {
+            alert('Please fill in all required fields before generating the email summary. (KPI metrics remain optional).');
+            if (firstInvalidInput) {
+                firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstInvalidInput.focus();
+            }
+            return;
+        }
+
+        generateEmailPreview();
     }
 
     /* AI Grammar & Paraphrase Enhancer */
@@ -1121,13 +1155,11 @@
         }
 
         updateScorecard();
-        generateAutomatedKPILists();
     }
 
     function processKPI(input) {
         if (!input) return;
         let val = input.value.trim();
-        if (!val) return;
 
         const tr = input.closest('tr');
         const type = tr.dataset.type;
@@ -1136,6 +1168,16 @@
 
         const varCell = tr.cells[3];
         const pctCell = tr.cells[4];
+
+        if (!val) {
+            statusCell.textContent = '-';
+            if (varCell) varCell.textContent = '-';
+            if (pctCell) pctCell.textContent = '-';
+            input.classList.remove('met-text', 'not-met-text');
+            statusCell.classList.remove('met-text', 'not-met-text');
+            updateScorecard();
+            return;
+        }
 
         let target = parseFloat(tr.dataset.target);
         
@@ -1168,7 +1210,6 @@
             input.classList.remove('met-text', 'not-met-text');
             statusCell.classList.remove('met-text', 'not-met-text');
             updateScorecard();
-            generateAutomatedKPILists();
             return;
         }
 
@@ -1192,7 +1233,6 @@
         }
 
         updateScorecard();
-        generateAutomatedKPILists();
     }
 
     /* Fixed Bullet Formatting for HTML Email Preview */
@@ -1211,8 +1251,6 @@
     }
 
     function generateEmailPreview() {
-        generateAutomatedKPILists();
-
         const durationSpent = calculateDuration();
         const startTimeVal = document.getElementById('startTime').value || 'N/A';
         const endTimeVal = document.getElementById('endTime').value || 'N/A';
@@ -1254,10 +1292,6 @@
             }
         });
 
-        if (!discRowsHTML) {
-            discRowsHTML = `<tr><td colspan="3" style="padding: 6px; border: 1px solid #cccccc; text-align: center; font-size: 12px;">No discussion questions selected.</td></tr>`;
-        }
-
         let kpiRowsHTML = '';
         document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
             const name = tr.cells[0].innerText.replace('✕', '').trim();
@@ -1269,7 +1303,7 @@
             }
 
             const actualInput = tr.cells[2].querySelector('input');
-            const inputVal = actualInput ? (actualInput.value || 'N/A') : tr.cells[2].innerText;
+            const inputVal = actualInput ? (actualInput.value || '-') : tr.cells[2].innerText;
 
             const varianceText = tr.cells[3] ? tr.cells[3].textContent : '-';
             const pctText = tr.cells[4] ? tr.cells[4].textContent : '-';
@@ -1281,17 +1315,23 @@
             if (statusText === 'MET') colorStyle = '#27ae60';
             if (statusText === 'NOT MET') colorStyle = '#c0392b';
 
-            kpiRowsHTML += `
-                <tr>
-                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: left; vertical-align: middle; white-space: nowrap; font-size: 11px;">${name}</td>
-                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${target}</td>
-                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap; font-size: 11px;">${inputVal}</td>
-                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${varianceText}</td>
-                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${pctText}</td>
-                    <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap; font-size: 11px;">${statusText}</td>
-                </tr>
-            `;
+            if (inputVal !== '-' && inputVal !== 'N/A') {
+                kpiRowsHTML += `
+                    <tr>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: left; vertical-align: middle; white-space: nowrap; font-size: 11px;">${name}</td>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${target}</td>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap; font-size: 11px;">${inputVal}</td>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${varianceText}</td>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${pctText}</td>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap; font-size: 11px;">${statusText}</td>
+                    </tr>
+                `;
+            }
         });
+
+        if (!kpiRowsHTML) {
+            kpiRowsHTML = `<tr><td colspan="6" style="padding: 6px; border: 1px solid #b0b0b0; text-align: center; font-size: 11px;">No KPI scores entered.</td></tr>`;
+        }
 
         const emailHTML = `
             <div style="font-family: Arial, sans-serif; font-size: 13px; line-height: 1.5; color: #333333; max-width: 620px;">
@@ -1347,12 +1387,12 @@
                     </tbody>
                 </table>
 
-                <h4 style="color: #27ae60; margin: 18px 0 8px 0; font-size: 14px;">Highlights (Met KPIs)</h4>
+                <h4 style="color: #27ae60; margin: 18px 0 8px 0; font-size: 14px;">Highlights</h4>
                 <ul style="padding-left: 18px; margin: 0 0 15px 0;">
                     ${formatBulletList(highlightsText)}
                 </ul>
 
-                <h4 style="color: #c0392b; margin: 18px 0 8px 0; font-size: 14px;">Lowlights (Missed KPIs)</h4>
+                <h4 style="color: #c0392b; margin: 18px 0 8px 0; font-size: 14px;">Lowlights</h4>
                 <ul style="padding-left: 18px; margin: 0 0 15px 0;">
                     ${formatBulletList(lowlightsText)}
                 </ul>
@@ -1444,6 +1484,9 @@
             });
             document.querySelectorAll('.kpi-input').forEach(el => {
                 el.className = 'kpi-input';
+            });
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.style.borderColor = '#dcdfe6';
             });
             document.getElementById('emailPreview').style.display = 'none';
             window.onload();
