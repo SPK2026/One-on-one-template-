@@ -374,7 +374,7 @@
         <div class="grid-2">
             <div class="form-group">
                 <label for="employeeName">Name *</label>
-                <input type="text" id="employeeName" required placeholder="e.g. Jane Doe">
+                <input type="text" id="employeeName" required placeholder="e.g. Jane Doe" oninput="recordStartTime()">
             </div>
             <div class="form-group">
                 <label for="lob">Line of Business (LOB) *</label>
@@ -408,6 +408,22 @@
             <div class="form-group">
                 <label for="oneOnOneDate">1-on-1 Date</label>
                 <input type="date" id="oneOnOneDate" required>
+            </div>
+        </div>
+
+        <!-- Meeting Time & Duration Tracker -->
+        <div class="grid-3">
+            <div class="form-group">
+                <label for="startTime">Start Time (Auto-captured)</label>
+                <input type="text" id="startTime" placeholder="Recorded when name is entered" readonly style="background-color: #f9f9f9; font-weight: bold; color: #2c3e50;">
+            </div>
+            <div class="form-group">
+                <label for="endTime">End Time (Auto-captured)</label>
+                <input type="text" id="endTime" placeholder="Recorded on email generation" readonly style="background-color: #f9f9f9; font-weight: bold; color: #2c3e50;">
+            </div>
+            <div class="form-group">
+                <label for="totalDuration">Total Duration Spent</label>
+                <input type="text" id="totalDuration" placeholder="Auto-calculated" readonly style="background-color: #eef7fc; font-weight: bold; color: #27ae60;">
             </div>
         </div>
 
@@ -745,6 +761,7 @@
 
 <script>
     let customKpiCounter = 0;
+    let startTimestamp = null;
 
     window.onload = function() {
         const today = new Date().toISOString().split('T')[0];
@@ -756,6 +773,44 @@
         document.getElementById('yearInput').value = dateObj.getFullYear();
         updateScorecard();
     };
+
+    /* Time & Duration Tracking Logic */
+    function recordStartTime() {
+        const nameVal = document.getElementById('employeeName').value.trim();
+        const startTimeInput = document.getElementById('startTime');
+        
+        if (nameVal.length > 0 && !startTimestamp) {
+            startTimestamp = new Date();
+            startTimeInput.value = startTimestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+    }
+
+    function calculateDuration() {
+        if (!startTimestamp) {
+            startTimestamp = new Date();
+            document.getElementById('startTime').value = startTimestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        const endTimestamp = new Date();
+        document.getElementById('endTime').value = endTimestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        const diffMs = endTimestamp - startTimestamp;
+        const totalMinutes = Math.floor(diffMs / 60000);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+
+        let durationString = '';
+        if (hours > 0) {
+            durationString = `${hours} hr ${minutes} mins`;
+        } else if (minutes > 0) {
+            durationString = `${minutes} mins`;
+        } else {
+            durationString = `< 1 min`;
+        }
+
+        document.getElementById('totalDuration').value = durationString;
+        return durationString;
+    }
 
     /* Add Custom KPI Row */
     function addCustomKPI() {
@@ -1158,6 +1213,10 @@
     function generateEmailPreview() {
         generateAutomatedKPILists();
 
+        const durationSpent = calculateDuration();
+        const startTimeVal = document.getElementById('startTime').value || 'N/A';
+        const endTimeVal = document.getElementById('endTime').value || 'N/A';
+
         const fullName = document.getElementById('employeeName').value.trim() || 'Employee';
         const firstName = fullName.split(' ')[0];
         const lob = document.getElementById('lob').value || 'N/A';
@@ -1244,6 +1303,7 @@
                 <table style="width: 100%; margin-bottom: 15px; border-collapse: collapse; font-size: 12px;">
                     <tr><td style="padding: 2px 0;"><strong>Name:</strong> ${fullName}</td><td style="padding: 2px 0;"><strong>LOB:</strong> ${lob}</td></tr>
                     <tr><td style="padding: 2px 0;"><strong>Month:</strong> ${month} ${year}</td><td style="padding: 2px 0;"><strong>Date:</strong> ${date}</td></tr>
+                    <tr><td style="padding: 2px 0;"><strong>Time Window:</strong> ${startTimeVal} - ${endTimeVal}</td><td style="padding: 2px 0;"><strong>Total Duration Spent:</strong> <span style="color: #27ae60; font-weight: bold;">${durationSpent}</span></td></tr>
                 </table>
 
                 <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">1-on-1 Discussion Topics & Ratings</h4>
@@ -1376,6 +1436,7 @@
     function clearForm() {
         if (confirm("Are you sure you want to clear all fields?")) {
             document.getElementById('oneOnOneForm').reset();
+            startTimestamp = null;
             document.querySelectorAll('.custom-kpi-row').forEach(r => r.remove());
             document.querySelectorAll('.status-cell').forEach(el => {
                 el.textContent = '-';
