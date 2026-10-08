@@ -6,6 +6,8 @@
     <title>Monthly 1-on-1 Performance Form with Advanced AI Enhancer</title>
     <!-- Included html2canvas for capturing DOM elements as images -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Canvas Confetti for Crackers/Confetti Effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -326,6 +328,15 @@
             background-color: #732d91;
         }
 
+        .btn-pdf {
+            background-color: #d35400;
+            color: white;
+        }
+
+        .btn-pdf:hover {
+            background-color: #e67e22;
+        }
+
         .subject-box {
             background: #eef7fc;
             border: 1px solid var(--accent-color);
@@ -361,9 +372,54 @@
             padding: 15px;
             border: 1px solid #ddd;
         }
+
+        /* Sad Smiley Quick Pop-Up Styles */
+        #sadSmileyOverlay {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            font-size: 90px;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #sadSmileyOverlay.show {
+            display: block;
+            transform: translate(-50%, -50%) scale(1.2);
+            opacity: 1;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #emailPreview, #emailPreview * {
+                visibility: visible;
+            }
+            #emailPreview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                border: none;
+                background: white;
+            }
+            .btn-container, .subject-box button, #emailPreview p, #emailPreview h2 {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
+
+<!-- Quick Popup Overlay for Sad Smiley -->
+<div id="sadSmileyOverlay">🙁</div>
 
 <div class="container">
     <h1>Monthly 1-on-1 Performance Form</h1>
@@ -748,12 +804,13 @@
             <button type="button" class="btn-primary" style="font-size: 0.85rem; padding: 6px 12px; white-space: nowrap;" onclick="copySubjectLine()">📋 Copy Subject Line</button>
         </div>
 
-        <p>Click the buttons below to copy either as HTML text or as an exact visual image to paste directly into Outlook/Slack/Teams.</p>
+        <p>Click the buttons below to copy either as HTML text, save as PDF, or as an exact visual image.</p>
         
         <div id="emailContent"></div>
 
         <div class="btn-container">
             <button type="button" class="btn-primary" onclick="copyToClipboard()">📋 Copy Email Body Format</button>
+            <button type="button" class="btn-pdf" onclick="saveAsPDF()">📥 Save as PDF</button>
             <button type="button" class="btn-image" onclick="copyEmailAsImage()">📷 Copy Email as Image</button>
         </div>
     </div>
@@ -762,6 +819,7 @@
 <script>
     let customKpiCounter = 0;
     let startTimestamp = null;
+    let previousKpiStatuses = {};
 
     window.onload = function() {
         const today = new Date().toISOString().split('T')[0];
@@ -773,6 +831,37 @@
         document.getElementById('yearInput').value = dateObj.getFullYear();
         updateScorecard();
     };
+
+    /* Crackers / Confetti & Sad Smiley Pop-up Animations */
+    function triggerCrackers() {
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 75,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+    }
+
+    function triggerSadSmiley() {
+        const smiley = document.getElementById('sadSmileyOverlay');
+        smiley.classList.add('show');
+        setTimeout(() => {
+            smiley.classList.remove('show');
+        }, 900);
+    }
+
+    function checkKpiStatusFeedback(kpiId, newStatus) {
+        const oldStatus = previousKpiStatuses[kpiId];
+        if (newStatus !== oldStatus) {
+            previousKpiStatuses[kpiId] = newStatus;
+            if (newStatus === 'MET') {
+                triggerCrackers();
+            } else if (newStatus === 'NOT MET') {
+                triggerSadSmiley();
+            }
+        }
+    }
 
     /* Time & Duration Tracking Logic */
     function recordStartTime() {
@@ -861,6 +950,7 @@
         const tr = document.getElementById(rowId);
         if (tr) {
             tr.remove();
+            delete previousKpiStatuses[rowId];
             updateScorecard();
             generateAutomatedKPILists();
         }
@@ -1129,21 +1219,23 @@
                 lossInput.classList.remove('met-text', 'not-met-text');
                 statusCell.classList.remove('met-text', 'not-met-text');
 
+                const statusStr = isMet ? 'MET' : 'NOT MET';
                 if (isMet) {
                     lossInput.classList.add('met-text');
                     statusCell.classList.add('met-text');
-                    statusCell.textContent = 'MET';
                 } else {
                     lossInput.classList.add('not-met-text');
                     statusCell.classList.add('not-met-text');
-                    statusCell.textContent = 'NOT MET';
                 }
+                statusCell.textContent = statusStr;
+                checkKpiStatusFeedback('row_loss', statusStr);
             } else {
                 statusCell.textContent = '-';
                 varCell.textContent = '-';
                 pctCell.textContent = '-';
                 lossInput.classList.remove('met-text', 'not-met-text');
                 statusCell.classList.remove('met-text', 'not-met-text');
+                checkKpiStatusFeedback('row_loss', '-');
             }
         } else {
             lossInput.value = '';
@@ -1152,6 +1244,7 @@
             pctCell.textContent = '-';
             lossInput.classList.remove('met-text', 'not-met-text');
             statusCell.classList.remove('met-text', 'not-met-text');
+            checkKpiStatusFeedback('row_loss', '-');
         }
 
         updateScorecard();
@@ -1162,6 +1255,7 @@
         let val = input.value.trim();
 
         const tr = input.closest('tr');
+        const rowId = tr.id || tr.dataset.kpi;
         const type = tr.dataset.type;
         const dir = tr.dataset.dir;
         const statusCell = tr.querySelector('.status-cell');
@@ -1175,6 +1269,7 @@
             if (pctCell) pctCell.textContent = '-';
             input.classList.remove('met-text', 'not-met-text');
             statusCell.classList.remove('met-text', 'not-met-text');
+            checkKpiStatusFeedback(rowId, '-');
             updateScorecard();
             return;
         }
@@ -1209,6 +1304,7 @@
             if (pctCell) pctCell.textContent = '-';
             input.classList.remove('met-text', 'not-met-text');
             statusCell.classList.remove('met-text', 'not-met-text');
+            checkKpiStatusFeedback(rowId, '-');
             updateScorecard();
             return;
         }
@@ -1222,16 +1318,17 @@
         input.classList.remove('met-text', 'not-met-text');
         statusCell.classList.remove('met-text', 'not-met-text');
 
+        const statusStr = isMet ? 'MET' : 'NOT MET';
         if (isMet) {
             input.classList.add('met-text');
             statusCell.classList.add('met-text');
-            statusCell.textContent = 'MET';
         } else {
             input.classList.add('not-met-text');
             statusCell.classList.add('not-met-text');
-            statusCell.textContent = 'NOT MET';
         }
+        statusCell.textContent = statusStr;
 
+        checkKpiStatusFeedback(rowId, statusStr);
         updateScorecard();
     }
 
@@ -1439,6 +1536,10 @@
         window.getSelection().removeAllRanges();
     }
 
+    function saveAsPDF() {
+        window.print();
+    }
+
     async function copyEmailAsImage() {
         const emailDiv = document.getElementById('emailContent');
         if (!emailDiv) return;
@@ -1477,6 +1578,7 @@
         if (confirm("Are you sure you want to clear all fields?")) {
             document.getElementById('oneOnOneForm').reset();
             startTimestamp = null;
+            previousKpiStatuses = {};
             document.querySelectorAll('.custom-kpi-row').forEach(r => r.remove());
             document.querySelectorAll('.status-cell').forEach(el => {
                 el.textContent = '-';
