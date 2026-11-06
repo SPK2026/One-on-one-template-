@@ -724,9 +724,9 @@
                     <td id="pct_csat_english">-</td>
                     <td id="status_csat_english" class="status-cell">-</td>
                 </tr>
-                <tr data-kpi="Quality Scores" data-type="pct" data-target="92.5" data-dir="more">
+                <tr id="row_quality" data-kpi="Quality Scores" data-type="pct" data-dir="more">
                     <td style="text-align: left;">Quality Scores (%)</td>
-                    <td>92.5%</td>
+                    <td><input type="text" id="target_quality" onblur="formatTargetField(this, 'pct')" oninput="processKPI(document.getElementById('kpi_quality'))" placeholder="Enter Target %"></td>
                     <td><input type="text" id="kpi_quality" class="kpi-input" onblur="processKPI(this)" placeholder="e.g. 95"></td>
                     <td id="variance_quality">-</td>
                     <td id="pct_quality">-</td>
@@ -1000,7 +1000,7 @@
         let metBullets = [];
         let notMetBullets = [];
 
-        document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
+        document.querySelectorAll('#kpiTable tbody tr').forEach(tr => {
             const cells = tr.cells;
             if (cells.length < 6) return;
 
@@ -1282,6 +1282,8 @@
             target = parseFloat(document.getElementById('target_shrinkage').value);
         } else if (tr.id === 'row_productivity') {
             target = parseFloat(document.getElementById('target_productivity').value);
+        } else if (tr.id === 'row_quality') {
+            target = parseFloat(document.getElementById('target_quality').value);
         } else if (tr.classList.contains('custom-kpi-row')) {
             const targetInput = tr.cells[1].querySelector('input');
             if (targetInput) {
