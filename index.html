@@ -319,15 +319,6 @@
             background-color: #c0392b;
         }
 
-        .btn-next-emp {
-            background-color: #f39c12;
-            color: white;
-        }
-
-        .btn-next-emp:hover {
-            background-color: #d68910;
-        }
-
         .btn-image {
             background-color: #8e44ad;
             color: white;
@@ -797,7 +788,6 @@
         <!-- Buttons -->
         <div class="btn-container">
             <button type="button" class="btn-secondary" onclick="clearForm()">Clear Everything</button>
-            <button type="button" class="btn-next-emp" onclick="clearForNextEmployee()">Clear for Next Employee</button>
             <button type="button" class="btn-primary" onclick="validateAndGenerateSummary()">Generate Email Summary</button>
         </div>
     </form>
@@ -998,3 +988,615 @@
             colorCode = '#27ae60'; // Green
         } else if (pctVal >= 75) {
             colorCode = '#d35400'; // Amber
+        }
+
+        scorecardEl.innerHTML = `<span style="color: ${colorCode}; font-weight: bold;">${metKPIs} / ${totalKPIs} Met (${pctVal}%)</span>`;
+
+        return { metKPIs, totalKPIs, pctVal, colorCode };
+    }
+
+    /* Auto-Generate Highlights (MET) & Lowlights (NOT MET) */
+    function generateAutomatedKPILists() {
+        let metBullets = [];
+        let notMetBullets = [];
+
+        document.querySelectorAll('#kpiTable tbody tr').forEach(tr => {
+            const cells = tr.cells;
+            if (cells.length < 6) return;
+
+            const metricName = cells[0].innerText.replace('✕', '').trim();
+            
+            let targetText = cells[1].innerText.trim();
+            const targetInput = cells[1].querySelector('input');
+            if (targetInput) targetText = targetInput.value.trim();
+
+            let actualText = '';
+            const actualInput = cells[2].querySelector('input');
+            if (actualInput) actualText = actualInput.value.trim();
+            else actualText = cells[2].innerText.trim();
+
+            const varianceText = cells[3].textContent.trim();
+            const pctText = cells[4].textContent.trim();
+            const statusText = cells[5].textContent.trim();
+
+            if (actualText && actualText !== '-' && actualText !== 'N/A' && targetText && targetText !== '-') {
+                if (statusText === 'MET') {
+                    let line = `• ${metricName}: Achieved ${actualText} against target of ${targetText} (Variance: ${varianceText}, Scored: ${pctText}).`;
+                    metBullets.push(line);
+                } else if (statusText === 'NOT MET') {
+                    let line = `• ${metricName}: Missed target of ${targetText} with actual performance at ${actualText} (Variance: ${varianceText}, Scored: ${pctText}).`;
+                    notMetBullets.push(line);
+                }
+            }
+        });
+
+        if (metBullets.length > 0) {
+            document.getElementById('highlights').value = metBullets.join('\n');
+        }
+        if (notMetBullets.length > 0) {
+            document.getElementById('lowlights').value = notMetBullets.join('\n');
+        }
+    }
+
+    /* Validation Logic */
+    function validateAndGenerateSummary() {
+        const form = document.getElementById('oneOnOneForm');
+        let isValid = true;
+        let firstInvalidInput = null;
+
+        const mandatoryInputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+
+        mandatoryInputs.forEach(input => {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.style.borderColor = '#e74c3c';
+                if (!firstInvalidInput) firstInvalidInput = input;
+            } else {
+                input.style.borderColor = '#dcdfe6';
+            }
+        });
+
+        if (!isValid) {
+            alert('Please fill in all required fields before generating the email summary. (KPI metrics remain optional).');
+            if (firstInvalidInput) {
+                firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstInvalidInput.focus();
+            }
+            return;
+        }
+
+        generateEmailPreview();
+    }
+
+    /* AI Grammar & Paraphrase Enhancer */
+    function enhanceText(elementId, styleSelectId) {
+        const field = document.getElementById(elementId);
+        let text = field.value.trim();
+        const style = document.getElementById(styleSelectId).value;
+
+        if (!text) {
+            alert("Please enter text first before enhancing.");
+            return;
+        }
+
+        const corrections = [
+            [/\bgrammer\b/gi, "grammar"],
+            [/\bspellings\b/gi, "spelling"],
+            [/\bteh\b/gi, "the"],
+            [/\brecieve\b/gi, "receive"],
+            [/\bacording\b/gi, "according"],
+            [/\btaht\b/gi, "that"],
+            [/\bseperated\b/gi, "separated"],
+            [/\bdont\b/gi, "don't"],
+            [/\bcant\b/gi, "can't"],
+            [/\bwont\b/gi, "won't"],
+            [/\bisnt\b/gi, "isn't"],
+            [/\barent\b/gi, "aren't"],
+            [/\bwaht\b/gi, "what"],
+            [/\bwrk\b/gi, "work"],
+            [/\bgud\b/gi, "good"],
+            [/\bbtwr\b/gi, "better"],
+            [/\bperfomance\b/gi, "performance"],
+            [/\btransations\b/gi, "transactions"],
+            [/\bcustmer\b/gi, "customer"],
+            [/\bcustmers\b/gi, "customers"],
+            [/\bescaltion\b/gi, "escalation"],
+            [/\bescaltions\b/gi, "escalations"],
+            [/\bcoaching\b/gi, "coaching"],
+            [/\bmanagr\b/gi, "manager"],
+            [/\bmsge\b/gi, "message"],
+            [/\bchatt\b/gi, "chat"],
+            [/\bcooperat\b/gi, "cooperate"],
+
+            [/\bdid good\b/gi, "demonstrated strong performance"],
+            [/\bdoing good\b/gi, "performing effectively"],
+            [/\bgreat job\b/gi, "exhibited commendable dedication"],
+            [/\bneeds work\b/gi, "requires further development"],
+            [/\bhard time\b/gi, "encountered difficulties with"],
+            [/\btried to\b/gi, "made proactive efforts to"],
+            [/\bnot good\b/gi, "below targeted expectations"],
+            [/\bvery bad\b/gi, "requiring immediate improvement"],
+            [/\btalked about\b/gi, "discussed and reviewed"],
+            [/\bhelped out\b/gi, "assisted effectively"],
+            [/\bgot angry\b/gi, "became escalated"],
+            [/\bno issue\b/gi, "maintained seamless operations"]
+        ];
+
+        corrections.forEach(([pattern, replacement]) => {
+            text = text.replace(pattern, replacement);
+        });
+
+        text = text.replace(/\bi\b/g, "I");
+
+        let lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+        let processedLines = lines.map(line => {
+            let clean = line.replace(/^[•\-\*]\s*/, '').trim();
+            clean = clean.charAt(0).toUpperCase() + clean.slice(1);
+
+            if (!/[.!?]$/.test(clean)) {
+                clean += ".";
+            }
+
+            if (style === "formal") {
+                return "• " + clean;
+            } else if (style === "constructive") {
+                clean = clean.replace(/Failed to/i, "Identified an opportunity to enhance")
+                             .replace(/Needs to improve/i, "Encouraged focused development in")
+                             .replace(/Problem with/i, "Working towards resolving challenges in");
+                return "• " + clean;
+            } else if (style === "executive") {
+                return clean;
+            }
+            return "• " + clean;
+        });
+
+        if (style === "executive") {
+            field.value = processedLines.join(" ");
+        } else {
+            field.value = processedLines.join("\n");
+        }
+
+        alert("Text enhanced! Spelling corrected, grammar fixed, and phrased professionally.");
+    }
+
+    function formatTargetField(input, type) {
+        if (!input) return;
+        let val = input.value.trim();
+        if (!val) return;
+
+        let numVal = parseFloat(val.replace(/[^\d.]/g, ''));
+        if (isNaN(numVal)) return;
+
+        if (type === 'secs') {
+            input.value = numVal + ' secs';
+        } else if (type === 'pct') {
+            input.value = numVal + '%';
+        } else {
+            input.value = numVal;
+        }
+    }
+
+    function calculateMetrics(actual, target, dir, type) {
+        if (isNaN(actual) || isNaN(target) || target === 0) {
+            return { variance: '-', pctScored: '-' };
+        }
+
+        let diff = actual - target;
+        let varStr = (diff > 0 ? '+' : '') + diff.toFixed(2);
+        
+        let pctVal = ((actual / target) * 100).toFixed(1);
+
+        if (type === 'pct') {
+            varStr += '%';
+        } else if (type === 'num' && target > 10) {
+            varStr += 's';
+        }
+
+        return { variance: varStr, pctScored: pctVal + '%' };
+    }
+
+    function calculateLossPer1k() {
+        const txns = parseFloat(document.getElementById('total_transactions').value);
+        const tgRl = parseFloat(document.getElementById('total_tg_rl').value);
+        const targetVal = parseFloat(document.getElementById('target_loss').value);
+
+        const lossInput = document.getElementById('kpi_loss');
+        const statusCell = document.getElementById('status_loss');
+        const varCell = document.getElementById('variance_loss');
+        const pctCell = document.getElementById('pct_loss');
+
+        if (!isNaN(txns) && txns > 0 && !isNaN(tgRl)) {
+            const lossVal = parseFloat(((tgRl / txns) * 1000).toFixed(2));
+            lossInput.value = lossVal;
+
+            if (!isNaN(targetVal)) {
+                let isMet = lossVal <= targetVal;
+                let metrics = calculateMetrics(lossVal, targetVal, 'less', 'num');
+                varCell.textContent = metrics.variance;
+                pctCell.textContent = metrics.pctScored;
+                
+                lossInput.classList.remove('met-text', 'not-met-text');
+                statusCell.classList.remove('met-text', 'not-met-text');
+
+                const statusStr = isMet ? 'MET' : 'NOT MET';
+                if (isMet) {
+                    lossInput.classList.add('met-text');
+                    statusCell.classList.add('met-text');
+                } else {
+                    lossInput.classList.add('not-met-text');
+                    statusCell.classList.add('not-met-text');
+                }
+                statusCell.textContent = statusStr;
+                checkKpiStatusFeedback('row_loss', statusStr);
+            } else {
+                statusCell.textContent = '-';
+                varCell.textContent = '-';
+                pctCell.textContent = '-';
+                lossInput.classList.remove('met-text', 'not-met-text');
+                statusCell.classList.remove('met-text', 'not-met-text');
+                checkKpiStatusFeedback('row_loss', '-');
+            }
+        } else {
+            lossInput.value = '';
+            statusCell.textContent = '-';
+            varCell.textContent = '-';
+            pctCell.textContent = '-';
+            lossInput.classList.remove('met-text', 'not-met-text');
+            statusCell.classList.remove('met-text', 'not-met-text');
+            checkKpiStatusFeedback('row_loss', '-');
+        }
+
+        updateScorecard();
+    }
+
+    function processKPI(input) {
+        if (!input) return;
+        let val = input.value.trim();
+
+        const tr = input.closest('tr');
+        const rowId = tr.id || tr.dataset.kpi;
+        const type = tr.dataset.type;
+        const dir = tr.dataset.dir;
+        const statusCell = tr.querySelector('.status-cell');
+
+        const varCell = tr.cells[3];
+        const pctCell = tr.cells[4];
+
+        if (!val) {
+            statusCell.textContent = '-';
+            if (varCell) varCell.textContent = '-';
+            if (pctCell) pctCell.textContent = '-';
+            input.classList.remove('met-text', 'not-met-text');
+            statusCell.classList.remove('met-text', 'not-met-text');
+            checkKpiStatusFeedback(rowId, '-');
+            updateScorecard();
+            return;
+        }
+
+        let target = parseFloat(tr.dataset.target);
+        
+        if (tr.id === 'row_aht') {
+            target = parseFloat(document.getElementById('target_aht').value);
+        } else if (tr.id === 'row_shrinkage') {
+            target = parseFloat(document.getElementById('target_shrinkage').value);
+        } else if (tr.id === 'row_productivity') {
+            target = parseFloat(document.getElementById('target_productivity').value);
+        } else if (tr.id === 'row_quality') {
+            target = parseFloat(document.getElementById('target_quality').value);
+        } else if (tr.classList.contains('custom-kpi-row')) {
+            const targetInput = tr.cells[1].querySelector('input');
+            if (targetInput) {
+                target = parseFloat(targetInput.value.replace(/[^\d.]/g, ''));
+            }
+        }
+
+        let numVal = parseFloat(val.replace(/[^\d.]/g, ''));
+        if (isNaN(numVal)) return;
+
+        if (type === 'pct') {
+            input.value = numVal + '%';
+        } else {
+            input.value = numVal + (type === 'secs' || tr.dataset.kpi === 'AHT' ? ' secs' : '');
+        }
+
+        if (isNaN(target)) {
+            statusCell.textContent = '-';
+            if (varCell) varCell.textContent = '-';
+            if (pctCell) pctCell.textContent = '-';
+            input.classList.remove('met-text', 'not-met-text');
+            statusCell.classList.remove('met-text', 'not-met-text');
+            checkKpiStatusFeedback(rowId, '-');
+            updateScorecard();
+            return;
+        }
+
+        let isMet = (dir === 'less') ? (numVal <= target) : (numVal >= target);
+        let metrics = calculateMetrics(numVal, target, dir, type);
+
+        if (varCell) varCell.textContent = metrics.variance;
+        if (pctCell) pctCell.textContent = metrics.pctScored;
+
+        input.classList.remove('met-text', 'not-met-text');
+        statusCell.classList.remove('met-text', 'not-met-text');
+
+        const statusStr = isMet ? 'MET' : 'NOT MET';
+        if (isMet) {
+            input.classList.add('met-text');
+            statusCell.classList.add('met-text');
+        } else {
+            input.classList.add('not-met-text');
+            statusCell.classList.add('not-met-text');
+        }
+        statusCell.textContent = statusStr;
+
+        checkKpiStatusFeedback(rowId, statusStr);
+        updateScorecard();
+    }
+
+    /* Fixed Bullet Formatting for HTML Email Preview */
+    function formatBulletList(rawText) {
+        if (!rawText || !rawText.trim()) return '<li style="margin-bottom: 4px; font-size: 13px;">None</li>';
+        
+        const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        
+        if (lines.length === 0) return '<li style="margin-bottom: 4px; font-size: 13px;">None</li>';
+
+        return lines.map(line => {
+            let cleanLine = line.replace(/^[•\-\*]\s*/, '').replace(/^\d+[\.\)]\s*/, '').trim();
+            if (!cleanLine) cleanLine = line;
+            return `<li style="margin-bottom: 4px; font-size: 13px;">${cleanLine}</li>`;
+        }).join('');
+    }
+
+    function generateEmailPreview() {
+        const durationSpent = calculateDuration();
+        const startTimeVal = document.getElementById('startTime').value || 'N/A';
+        const endTimeVal = document.getElementById('endTime').value || 'N/A';
+
+        const fullName = document.getElementById('employeeName').value.trim() || 'Employee';
+        const firstName = fullName.split(' ')[0];
+        const lob = document.getElementById('lob').value || 'N/A';
+        const month = document.getElementById('monthSelect').value || 'Month';
+        const year = document.getElementById('yearInput').value || 'Year';
+        const date = document.getElementById('oneOnOneDate').value;
+        const voeText = document.getElementById('voe').value || '';
+        const highlightsText = document.getElementById('highlights').value || '';
+        const lowlightsText = document.getElementById('lowlights').value || '';
+        const wayForwardText = document.getElementById('wayForward').value || '';
+        const actionPlanText = document.getElementById('actionPlan').value || '';
+
+        const scorecardData = updateScorecard();
+
+        const subjectString = `1-on-1 Performance Summary | ${fullName} - ${lob} - ${month} ${year}`;
+        document.getElementById('subjectText').innerText = subjectString;
+
+        let discRowsHTML = '';
+        document.querySelectorAll('.disc-row').forEach(row => {
+            const cat = row.dataset.category;
+            const qSelect = row.querySelector('.q-select');
+            const qRating = row.querySelector('.q-rating');
+            
+            const qVal = qSelect.value ? qSelect.value : 'No question selected';
+            const rVal = qRating.value ? `${qRating.value} / 4` : 'N/A';
+
+            if (qSelect.value) {
+                discRowsHTML += `
+                    <tr>
+                        <td style="padding: 5px 8px; border: 1px solid #cccccc; vertical-align: middle; font-size: 12px;"><strong>${cat}</strong></td>
+                        <td style="padding: 5px 8px; border: 1px solid #cccccc; vertical-align: middle; font-size: 12px;">${qVal}</td>
+                        <td style="padding: 5px 8px; border: 1px solid #cccccc; text-align: center; vertical-align: middle; font-size: 12px;"><strong>${rVal}</strong></td>
+                    </tr>
+                `;
+            }
+        });
+
+        let kpiRowsHTML = '';
+        document.querySelectorAll('.kpi-table tbody tr').forEach(tr => {
+            const name = tr.cells[0].innerText.replace('✕', '').trim();
+            
+            let target = tr.cells[1].innerText;
+            const targetInput = tr.cells[1].querySelector('input');
+            if (targetInput) {
+                target = targetInput.value ? targetInput.value : '-';
+            }
+
+            const actualInput = tr.cells[2].querySelector('input');
+            const inputVal = actualInput ? (actualInput.value || '-') : tr.cells[2].innerText;
+
+            const varianceText = tr.cells[3] ? tr.cells[3].textContent : '-';
+            const pctText = tr.cells[4] ? tr.cells[4].textContent : '-';
+
+            const statusCell = tr.cells[5];
+            const statusText = statusCell ? statusCell.textContent : '-';
+
+            let colorStyle = '#333333';
+            if (statusText === 'MET') colorStyle = '#27ae60';
+            if (statusText === 'NOT MET') colorStyle = '#c0392b';
+
+            if (inputVal !== '-' && inputVal !== 'N/A') {
+                kpiRowsHTML += `
+                    <tr>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: left; vertical-align: middle; white-space: nowrap; font-size: 11px;">${name}</td>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${target}</td>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap; font-size: 11px;">${inputVal}</td>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${varianceText}</td>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; white-space: nowrap; font-size: 11px;">${pctText}</td>
+                        <td style="padding: 4px 6px; border: 1px solid #b0b0b0; text-align: center; vertical-align: middle; font-weight: bold; color: ${colorStyle}; white-space: nowrap; font-size: 11px;">${statusText}</td>
+                    </tr>
+                `;
+            }
+        });
+
+        if (!kpiRowsHTML) {
+            kpiRowsHTML = `<tr><td colspan="6" style="padding: 6px; border: 1px solid #b0b0b0; text-align: center; font-size: 11px;">No KPI scores entered.</td></tr>`;
+        }
+
+        const emailHTML = `
+            <div style="font-family: Arial, sans-serif; font-size: 13px; line-height: 1.5; color: #333333; max-width: 620px;">
+                <p style="margin: 0 0 12px 0; font-size: 14px;">Hi <strong>${firstName}</strong>,</p>
+                <p style="margin: 0 0 14px 0; font-size: 13px;">Please find below the performance summary from our 1-on-1 discussion for <strong>${month} ${year}</strong>.</p>
+                
+                <h4 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 4px; margin: 18px 0 10px 0; font-size: 14px;">Monthly 1-on-1 Summary</h4>
+                
+                <table style="width: 100%; margin-bottom: 15px; border-collapse: collapse; font-size: 12px;">
+                    <tr><td style="padding: 2px 0;"><strong>Name:</strong> ${fullName}</td><td style="padding: 2px 0;"><strong>LOB:</strong> ${lob}</td></tr>
+                    <tr><td style="padding: 2px 0;"><strong>Month:</strong> ${month} ${year}</td><td style="padding: 2px 0;"><strong>Date:</strong> ${date}</td></tr>
+                    <tr><td style="padding: 2px 0;"><strong>Time Window:</strong> ${startTimeVal} - ${endTimeVal}</td><td style="padding: 2px 0;"><strong>Total Duration Spent:</strong> <span style="color: #27ae60; font-weight: bold;">${durationSpent}</span></td></tr>
+                </table>
+
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">1-on-1 Discussion Topics & Ratings</h4>
+                <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left; border: 1px solid #cccccc; margin-bottom: 15px;">
+                    <thead style="background-color: #f2f2f2;">
+                        <tr>
+                            <th style="width: 25%; padding: 5px 8px; border: 1px solid #cccccc; font-size: 11px;">Category</th>
+                            <th style="width: 60%; padding: 5px 8px; border: 1px solid #cccccc; font-size: 11px;">Discussion Question</th>
+                            <th style="width: 15%; padding: 5px 8px; border: 1px solid #cccccc; text-align: center; font-size: 11px;">Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${discRowsHTML}
+                    </tbody>
+                </table>
+
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Voice of Employee (VOE)</h4>
+                <ul style="padding-left: 18px; margin: 0 0 15px 0;">
+                    ${formatBulletList(voeText)}
+                </ul>
+
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">KPI Performance Summary</h4>
+                
+                <div style="background: #f8f9fa; border: 1px solid #cccccc; padding: 8px 12px; margin-bottom: 10px; font-size: 13px; border-left: 4px solid ${scorecardData.colorCode};">
+                    <strong>Overall KPI Score:</strong> <span style="color: ${scorecardData.colorCode}; font-weight: bold;">${scorecardData.metKPIs} / ${scorecardData.totalKPIs} Met (${scorecardData.pctVal}%)</span>
+                </div>
+
+                <table border="1" cellpadding="4" cellspacing="0" style="border-collapse: collapse; width: 100%; border: 1px solid #b0b0b0; margin-bottom: 15px;">
+                    <thead style="background-color: #e2e8f0;">
+                        <tr>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: left; font-size: 11px;">Metric</th>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: center; font-size: 11px;">Target</th>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: center; font-size: 11px;">Actual</th>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: center; font-size: 11px;">Variance</th>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: center; font-size: 11px;">% Scored</th>
+                            <th style="padding: 5px 6px; border: 1px solid #b0b0b0; color: #111111; text-align: center; font-size: 11px;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${kpiRowsHTML}
+                    </tbody>
+                </table>
+
+                <h4 style="color: #27ae60; margin: 18px 0 8px 0; font-size: 14px;">Highlights</h4>
+                <ul style="padding-left: 18px; margin: 0 0 15px 0;">
+                    ${formatBulletList(highlightsText)}
+                </ul>
+
+                <h4 style="color: #c0392b; margin: 18px 0 8px 0; font-size: 14px;">Lowlights</h4>
+                <ul style="padding-left: 18px; margin: 0 0 15px 0;">
+                    ${formatBulletList(lowlightsText)}
+                </ul>
+
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Way Forward</h4>
+                <ul style="padding-left: 18px; margin: 0 0 15px 0;">
+                    ${formatBulletList(wayForwardText)}
+                </ul>
+
+                <h4 style="color: #2c3e50; margin: 18px 0 8px 0; font-size: 14px;">Action Plan & Timeline</h4>
+                <ul style="padding-left: 18px; margin: 0 0 15px 0;">
+                    ${formatBulletList(actionPlanText)}
+                </ul>
+            </div>
+        `;
+
+        document.getElementById('emailContent').innerHTML = emailHTML;
+        document.getElementById('emailPreview').style.display = 'block';
+        document.getElementById('emailPreview').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copySubjectLine() {
+        const subjectText = document.getElementById('subjectText').innerText;
+        navigator.clipboard.writeText(subjectText).then(() => {
+            alert('Subject line copied to clipboard!');
+        }).catch(() => {
+            alert('Failed to copy subject line automatically.');
+        });
+    }
+
+    function copyToClipboard() {
+        const emailDiv = document.getElementById('emailContent');
+        const range = document.createRange();
+        range.selectNode(emailDiv);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        
+        try {
+            document.execCommand('copy');
+            alert('Formatted summary copied! You can now paste (Ctrl+V) directly into your email body.');
+        } catch (err) {
+            alert('Failed to copy. Please manually select and copy the text.');
+        }
+        window.getSelection().removeAllRanges();
+    }
+
+    function saveAsPDF() {
+        window.print();
+    }
+
+    async function copyEmailAsImage() {
+        const emailDiv = document.getElementById('emailContent');
+        if (!emailDiv) return;
+
+        try {
+            const canvas = await html2canvas(emailDiv, {
+                backgroundColor: '#ffffff',
+                scale: 2,
+                logging: false,
+                useCORS: true
+            });
+
+            canvas.toBlob(async (blob) => {
+                if (!blob) {
+                    alert('Failed to generate image block.');
+                    return;
+                }
+                try {
+                    const data = [new ClipboardItem({ [blob.type]: blob })];
+                    await navigator.clipboard.write(data);
+                    alert('Email image copied to clipboard! You can paste (Ctrl+V) it directly into Outlook, Teams, or Slack.');
+                } catch (err) {
+                    const link = document.createElement('a');
+                    link.download = '1-on-1-Performance-Summary.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    alert('Image copy was blocked by browser permissions, so the PNG file has been downloaded to your computer instead.');
+                }
+            }, 'image/png');
+        } catch (err) {
+            alert('An error occurred while converting the section to an image: ' + err.message);
+        }
+    }
+
+    function clearForm() {
+        if (confirm("Are you sure you want to clear all fields?")) {
+            document.getElementById('oneOnOneForm').reset();
+            startTimestamp = null;
+            previousKpiStatuses = {};
+            document.querySelectorAll('.custom-kpi-row').forEach(r => r.remove());
+            document.querySelectorAll('.status-cell').forEach(el => {
+                el.textContent = '-';
+                el.className = 'status-cell';
+            });
+            document.querySelectorAll('.kpi-input').forEach(el => {
+                el.className = 'kpi-input';
+            });
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.style.borderColor = '#dcdfe6';
+            });
+            document.getElementById('emailPreview').style.display = 'none';
+            window.onload();
+        }
+    }
+</script>
+
+</body>
+</html>
